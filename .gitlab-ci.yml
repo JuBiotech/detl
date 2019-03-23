@@ -1,0 +1,27 @@
+stages:
+  - build
+  - test
+  - release
+
+
+test-detl:
+  stage: test
+  image: python:3.6
+  script:
+    - cd detl && python setup.py develop && cd ..
+    - cd tests && python -m unittest -v
+
+
+release-detl:
+  stage: release
+  image: python:3.6
+  script:
+    - cd detl && python setup.py bdist_wheel && cp dist/*.whl ..
+  artifacts:
+    paths:
+      - ./*.whl
+  only:
+    # only run on refs that are named like v1.2 or v1.2.3
+    - /^detl_v(\d+\.)?(\d+\.)?(\*|\d+)$/
+  except:
+    - branches
