@@ -12,6 +12,16 @@ test-detl:
     - cd tests && python -m unittest -v
 
 
+coverage-detl:
+  stage: test
+  image: python:3.6
+  script:
+    - cd detl && python setup.py develop && cd ..
+    - pip install coverage
+    - cd tests && coverage run tests.py && coverage report -m
+
+
+
 release-detl:
   stage: release
   image: python:3.6

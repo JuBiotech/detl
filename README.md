@@ -1,3 +1,7 @@
+[![pipeline status](https://gitlab.fz-juelich.de/IBG-1/micropro/detl/badges/master/pipeline.svg)](https://jugit.fz-juelich.de/IBG-1/micropro/robotools/commits/master)
+[![coverage report](https://gitlab.fz-juelich.de/IBG-1/micropro/detl/badges/master/coverage.svg)](https://jugit.fz-juelich.de/IBG-1/micropro/robotools/commits/master)
+
+
 # detl
 With `detl` you can analyze raw data export CSVs from DASware 4 or 5.
 
