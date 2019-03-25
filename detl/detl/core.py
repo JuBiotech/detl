@@ -9,7 +9,7 @@ class DWData(object):
 
 
 class DASwareParser(object):
-    """Abstract type for parsers that read BioLector CSV files."""
+    """Abstract type for parsers that read DASware CSV files."""
 
     __metaclass__ = abc.ABCMeta
 

@@ -21,7 +21,7 @@ def get_parser(filepath) -> DASwareParser:
         DWDParser: a parser that can be used for the provided file type
 
     Raises:
-        NotImlementedError: when the file contents do not match with a known BioLector CSV style
+        NotImlementedError: when the file contents do not match with a known DASware CSV style
     """
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
