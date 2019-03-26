@@ -32,9 +32,9 @@ def get_parser(filepath) -> DASwareParser:
 
     version = None
 
-    if lines[0].startswith('[Info]'):
+    if len(lines) > 2 and lines[2].startswith('FngArchiv;4.0.1'):
         version = DASwareVersion.V4
-    elif lines[0].startswith('"[Info]"'):
+    elif len(lines) > 2 and lines[2].startswith('"FngArchiv";"5.0.0"'):
         version = DASwareVersion.V5
     else:
         raise NotImplementedError('Unsupported file version')
