@@ -1,5 +1,5 @@
-[![pipeline status](https://gitlab.fz-juelich.de/IBG-1/micropro/detl/badges/master/pipeline.svg)](https://jugit.fz-juelich.de/IBG-1/micropro/robotools/commits/master)
-[![coverage report](https://gitlab.fz-juelich.de/IBG-1/micropro/detl/badges/master/coverage.svg)](https://jugit.fz-juelich.de/IBG-1/micropro/robotools/commits/master)
+[![pipeline status](https://gitlab.fz-juelich.de/IBG-1/micropro/detl/badges/master/pipeline.svg)](https://gitlab.fz-juelich.de/IBG-1/micropro/robotools/commits/master)
+[![coverage report](https://gitlab.fz-juelich.de/IBG-1/micropro/detl/badges/master/coverage.svg)](https://gitlab.fz-juelich.de/IBG-1/micropro/robotools/commits/master)
 
 
 # detl
