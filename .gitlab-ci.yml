@@ -30,6 +30,7 @@ release-detl:
   artifacts:
     paths:
       - ./*.whl
+    expire_in: 30 yrs
   only:
     # only run on refs that are named like v1.2 or v1.2.3
     - /^detl_v(\d+\.)?(\d+\.)?(\*|\d+)$/
