@@ -9,7 +9,7 @@ test-detl:
   image: python:3.6
   script:
     - cd detl && python setup.py develop && cd ..
-    - cd tests && python -m unittest -v
+    - python -m unittest discover -s tests -v
 
 
 coverage-detl:
@@ -18,7 +18,7 @@ coverage-detl:
   script:
     - cd detl && python setup.py develop && cd ..
     - pip install coverage
-    - cd tests && coverage run tests.py && coverage report -m
+    - coverage run tests/tests.py && coverage report -m
 
 
 
@@ -30,6 +30,7 @@ release-detl:
   artifacts:
     paths:
       - ./*.whl
+    expire_in: 30 yrs
   only:
     # only run on refs that are named like v1.2 or v1.2.3
     - /^detl_v(\d+\.)?(\d+\.)?(\*|\d+)$/

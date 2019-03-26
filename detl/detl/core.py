@@ -4,8 +4,24 @@ import enum
 import pathlib
 
 
+class DASwareVersion(enum.Enum):
+    V4 = 'v4'
+    V5 = 'v5'
+
+
 class DWData(object):
-    pass
+    """Standardized data type for DASGIP data."""
+    def __init__(self, data, version:DASwareVersion):
+        self._data = data
+        self._version = version
+
+    @property
+    def data(self) -> dict:
+    	return self._data
+
+    @property
+    def version(self) -> DASwareVersion:
+    	return self._version
 
 
 class DASwareParser(object):
@@ -22,7 +38,3 @@ class DASwareParser(object):
         """
         raise NotImplementedError('Whoever implemented {} screwed up.'.format(self.__class__.__name__))
 
-
-class DASwareVersion(enum.Enum):
-    V4 = 'v4'
-    V5 = 'v5'
