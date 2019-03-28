@@ -1,9 +1,12 @@
+import logging
+import numpy
 import pathlib
 import pandas
-import re
-from io import StringIO
 
 from .. import core
+from . import common
+
+logger = logging.getLogger('detl.parsing.dw4')
 
 
 class DASware4Parser(core.DASwareParser):
@@ -13,41 +16,30 @@ class DASware4Parser(core.DASwareParser):
         Args:
             filepath (str or pathlib.Path): path pointing to the file of interest
         """
-        if isinstance(filepath, str):
-            fpath = pathlib.Path(filepath)
-        elif isinstance(filepath, pathlib.Path):
-            fpath = filepath
-        else:
-            raise ValueError('Please provide filepath either as str or pathlib.Path object')
-
-        string_collection = dict()
-        reactor_pattern = re.compile(r'\[TrackData(\d)\]')
-        global_end_pattern = re.compile(r'\[Events\]')
-        on_record = None
-
-        with fpath.open(mode='r', errors='replace') as fobject:
-            for line in fobject:
-                if on_record is None:
-                    find_reactor = re.findall(reactor_pattern, line)
-                    find_global_end = re.match(global_end_pattern, line)
-                    
-                    if find_reactor != []:
-                        on_record = int(find_reactor[0])
-                        string_collection.update({on_record: StringIO()})
-                    elif find_global_end is not None:
-                        break
-                else:
-                    if line.rstrip() == (len(line.rstrip()) * line[0]):
-                        string_collection[on_record].seek(0)
-                        on_record = None
-                    else:
-                        string_collection[on_record].write(line)
-
-        df_collection = dict()
-        for key, sobject in string_collection.items():
-            df_collection.update({
-                key: pandas.read_csv(sobject, sep=';')
-            })
-
-        return core.DWData(df_collection, core.DASwareVersion.V4)
-
+        scoped_blocks = common.split_blocks(filepath)
+        dd = common.transform_to_dwdata(scoped_blocks, {
+            'Info': common.parse_generic,
+            'CoreInfo': common.parse_generic,
+            'ProjectInfo': common.parse_generic_T,
+            'TrackInfo': common.parse_generic_T,
+            'TrackData': common.parse_generic,
+            'Setup': common.parse_generic,
+            'Unit': common.parse_generic,
+            'Requirements': common.parse_generic,
+            'Sensor Elements': common.parse_generic,
+            'Device Channels': common.parse_generic,
+            'Profiles': common.parse_generic,
+            'Events': common.parse_generic,
+            'Fb-Pro': common.parse_generic,
+            'Procedure': common.parse_generic,
+            'Profile Columns': common.parse_generic,
+            'Plant': common.parse_generic,
+            'Units': common.parse_generic,
+            'Sensors': common.parse_generic,
+            'Modules': common.parse_generic,
+            'External Servers': common.parse_generic,
+            'External Values': common.parse_generic,
+            'Internal Values': common.parse_generic,
+            'Setups': common.parse_generic,
+        }, version=core.DASwareVersion.V5)
+        return dd
