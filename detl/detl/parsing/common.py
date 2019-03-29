@@ -73,7 +73,7 @@ def transform_to_dwdata(scoped_blocks:dict, blockparsers:dict, version:core.DASw
                     else:
                         setattr(dd[scope], attr, df)
                 except:
-                    logger.warn(f'scope {scope}: Failed to parse block "{header}"')
+                    logger.warning(f'scope {scope}: Failed to parse block "{header}"')
     return dd
 
 
@@ -88,4 +88,13 @@ def parse_generic_T(header, block, scope):
     return (attr, df.T)
 
 
+def parse_requirements(header, block, scope):
+    raise NotImplementedError()
 
+
+def parse_profiles(header, block, scope):
+    raise NotImplementedError()
+
+
+def parse_profile_columns(header, block, scope):
+    raise NotImplementedError()
