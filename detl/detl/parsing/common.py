@@ -55,17 +55,6 @@ def split_blocks(filepath:pathlib.Path) -> dict:
     return scoped_blocks
 
 
-def parse_generic(header, block, scope):
-    df = pandas.read_csv(StringIO(block), sep=';')
-    attr = '_' + header.lower().replace(' ', '_').replace('-', '_')
-    return (attr, df)
-
-
-def parse_generic_T(header, block, scope):
-    attr, df = parse_generic(header, block, scope)
-    return (attr, df.T)
-
-
 def transform_to_dwdata(scoped_blocks:dict, blockparsers:dict, version:core.DASwareVersion) -> core.DWData:
     dd = core.DWData(version)
     for scope, blocks in scoped_blocks.items():
@@ -86,4 +75,17 @@ def transform_to_dwdata(scoped_blocks:dict, blockparsers:dict, version:core.DASw
                 except:
                     logger.warn(f'scope {scope}: Failed to parse block "{header}"')
     return dd
+
+
+def parse_generic(header, block, scope):
+    df = pandas.read_csv(StringIO(block), sep=';')
+    attr = '_' + header.lower().replace(' ', '_').replace('-', '_')
+    return (attr, df)
+
+
+def parse_generic_T(header, block, scope):
+    attr, df = parse_generic(header, block, scope)
+    return (attr, df.T)
+
+
 
