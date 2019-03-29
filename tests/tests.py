@@ -6,29 +6,48 @@ import unittest
 
 import detl
 
-basic_parsing_testfiles = [
-    pathlib.Path('tests', 'testfiles', 'v4_NT-WMB-2.Control.csv'),
-    pathlib.Path('tests', 'testfiles', 'v4_20180726.Control.csv'),
-    pathlib.Path('tests', 'testfiles', 'long_CTPC06110.20190218.Control.csv'),
+dir_testfiles = pathlib.Path(pathlib.Path(__file__).absolute().parent, 'testfiles')
+
+v4_testfiles = [
+    pathlib.Path(dir_testfiles, 'v4_NT-WMB-2.Control.csv'),
+    pathlib.Path(dir_testfiles, 'v4_20180726.Control.csv'),
 ]
-basic_parsing_nreactors = [4, 4, 4]
-basic_parsing_trackdata_nrows = [
+v4_nreactors = [
+    4,
+    4
+]
+v4_trackdata_nrows = [
     [5461, 5460, 5460, 5459],
     [1371, 1370, 1370, 1370],
+]
+
+v5_testfiles = [
+    pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv'),
+    pathlib.Path(dir_testfiles, 'medium_CTPC06110.20181219.Control.csv'),
+    pathlib.Path(dir_testfiles, 'long_CTPC06110.20190218.Control.csv'),
+]
+v5_nreactors = [
+    4,
+    4,
+    4,
+]
+v5_trackdata_nrows = [
+    [14111, 14112, 14108, 14112],
+    [16936, 16936, 16935, 16936],
     [52245, 52245, 52245, 52245],
 ]
 
 
 class TestParserSelection(unittest.TestCase):
     def test_v4_detection(self):
-        parser = detl.get_parser(pathlib.Path('tests', 'testfiles', 'v4_20180726.Control.csv'))
+        parser = detl.get_parser(pathlib.Path(dir_testfiles, 'v4_20180726.Control.csv'))
         self.assertIsNotNone(parser)
         self.assertIsInstance(parser, detl.core.DASwareParser)
         self.assertIsInstance(parser, detl.parsing.dw4.DASware4Parser)
         return
     
     def test_v5_detection(self):
-        parser = detl.get_parser(pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv'))
+        parser = detl.get_parser(pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv'))
         self.assertIsNotNone(parser)
         self.assertIsInstance(parser, detl.core.DASwareParser)
         self.assertIsInstance(parser, detl.parsing.dw5.DASware5Parser)
@@ -36,16 +55,16 @@ class TestParserSelection(unittest.TestCase):
 
     def test_invalid_detection(self):
         with self.assertRaises(NotImplementedError):
-            _ = detl.get_parser(pathlib.Path('tests', 'testfiles', 'invalid.csv'))
+            _ = detl.get_parser(pathlib.Path(dir_testfiles, 'invalid.csv'))
         return
 
 
 class TestCommonParsing(unittest.TestCase):
-    def test_split_blocks(self):
+    def test_split_blocks_v5(self):
         with self.assertRaises(ValueError):
             detl.parsing.common.split_blocks(['bla'])
 
-        filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
+        filepath = pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv')
         
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
         self.assertEqual(len(scoped_blocks), 5)
@@ -79,7 +98,7 @@ class TestCommonParsing(unittest.TestCase):
         return
 
     def test_parse_generic(self):
-        filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
+        filepath = pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv')
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
         attr, df = detl.parsing.common.parse_generic('Info', scoped_blocks[None]['Info'], scope=None)
         self.assertEqual(attr, '_info')
@@ -88,7 +107,7 @@ class TestCommonParsing(unittest.TestCase):
         self.assertEqual(len(df.columns), 7)
     
     def test_parse_generic_T(self):
-        filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
+        filepath = pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv')
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
         attr, df = detl.parsing.common.parse_generic_T('Info', scoped_blocks[None]['Info'], scope=None)
         self.assertEqual(attr, '_info')
@@ -96,18 +115,29 @@ class TestCommonParsing(unittest.TestCase):
         self.assertEqual(len(df), 7)
         self.assertEqual(len(df.columns), 71)
     
-    def test_transform_to_dwdata(self):
-        filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
+    def test_transform_to_dwdata_v5(self):
+        filepath = pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv')
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
-        dd = detl.parsing.common.transform_to_dwdata(scoped_blocks, detl.parsing.dw4.BLOCKPARSERS, detl.DASwareVersion.V4)
+        dd = detl.parsing.common.transform_to_dwdata(scoped_blocks, detl.parsing.dw5.BLOCKPARSERS, detl.DASwareVersion.V5)
         self.assertIsInstance(dd, detl.DWData)
         self.assertIsInstance(dd, dict)
-        self.assertEqual(dd.version, detl.DASwareVersion.V4)
+        self.assertEqual(dd.version, detl.DASwareVersion.V5)
 
 
 class TestDW4Parsing(unittest.TestCase):
     def test_trackdata_row_count(self):
-        for fp, row_counts, nunits in zip(basic_parsing_testfiles, basic_parsing_trackdata_nrows, basic_parsing_nreactors):
+        for fp, row_counts, nunits in zip(v4_testfiles, v4_trackdata_nrows, v4_nreactors):
+            ddata = detl.parse(fp)
+            for r, nrows in zip(range(1, nunits + 1), row_counts):
+                self.assertTrue(r in ddata)
+                self.assertIsNotNone(ddata[r].trackdata)
+                self.assertEqual(len(ddata[r].trackdata), nrows)
+        return
+
+
+class TestDW5Parsing(unittest.TestCase):
+    def test_trackdata_row_count(self):
+        for fp, row_counts, nunits in zip(v5_testfiles, v5_trackdata_nrows, v5_nreactors):
             ddata = detl.parse(fp)
             for r, nrows in zip(range(1, nunits + 1), row_counts):
                 self.assertTrue(r in ddata)
