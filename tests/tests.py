@@ -11,14 +11,13 @@ basic_parsing_testfiles = [
     pathlib.Path('tests', 'testfiles', 'v4_20180726.Control.csv'),
     pathlib.Path('tests', 'testfiles', 'long_CTPC06110.20190218.Control.csv'),
 ]
-
-basic_parsing_number_of_dfs = [4, 4, 4]
-
-basic_parsing_row_counts = [
+basic_parsing_nreactors = [4, 4, 4]
+basic_parsing_trackdata_nrows = [
     [5461, 5460, 5460, 5459],
     [1371, 1370, 1370, 1370],
     [52245, 52245, 52245, 52245],
 ]
+
 
 class TestParserSelection(unittest.TestCase):
     def test_v4_detection(self):
@@ -43,6 +42,9 @@ class TestParserSelection(unittest.TestCase):
 
 class TestCommonParsing(unittest.TestCase):
     def test_split_blocks(self):
+        with self.assertRaises(ValueError):
+            detl.parsing.common.split_blocks(['bla'])
+
         filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
         
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
@@ -105,7 +107,7 @@ class TestCommonParsing(unittest.TestCase):
 
 class TestDW4Parsing(unittest.TestCase):
     def test_trackdata_row_count(self):
-        for fp, row_counts, nunits in zip(basic_parsing_testfiles, basic_parsing_row_counts, basic_parsing_number_of_dfs):
+        for fp, row_counts, nunits in zip(basic_parsing_testfiles, basic_parsing_trackdata_nrows, basic_parsing_nreactors):
             ddata = detl.parse(fp)
             for r, nrows in zip(range(1, nunits + 1), row_counts):
                 self.assertTrue(r in ddata)
