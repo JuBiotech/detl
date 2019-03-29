@@ -41,28 +41,76 @@ class TestParserSelection(unittest.TestCase):
         return
 
 
-class TestBasicParsing(unittest.TestCase):
-    def test_dataframes(self):
-        for fp in basic_parsing_testfiles:
-            ddata = detl.parse(fp)
-            for _, item in ddata.data.items():
-                self.assertIsInstance(item, pandas.DataFrame)
+class TestCommonParsing(unittest.TestCase):
+    def test_split_blocks(self):
+        filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
+        
+        scoped_blocks = detl.parsing.common.split_blocks(filepath)
+        self.assertEqual(len(scoped_blocks), 5)
+        self.assertTrue(None in scoped_blocks)
+        self.assertTrue(1 in scoped_blocks)
+        self.assertTrue(2 in scoped_blocks)
+        self.assertTrue(3 in scoped_blocks)
+        self.assertTrue(4 in scoped_blocks)
+        self.assertTrue('TrackData' not in scoped_blocks)
+        self.assertTrue('Events' in scoped_blocks[None])
+        self.assertTrue('Fb-Pro' in scoped_blocks[None])
+        self.assertTrue('Procedure' in scoped_blocks[None])
+        self.assertTrue('Profile Columns' in scoped_blocks[None])
+        self.assertTrue('Plant' in scoped_blocks[None])
+        self.assertTrue('Units' in scoped_blocks[None])
+        self.assertTrue('Sensors' in scoped_blocks[None])
+        self.assertTrue('Modules' in scoped_blocks[None])
+        self.assertTrue('External Servers' in scoped_blocks[None])
+        self.assertTrue('External Values' in scoped_blocks[None])
+        self.assertTrue('Internal Values' in scoped_blocks[None])
+        self.assertTrue('Setups' in scoped_blocks[None])
+        for r in {1,2,3,4}:
+            self.assertTrue('TrackData' in scoped_blocks[r])
+            self.assertTrue('Setup' in scoped_blocks[r])
+            self.assertTrue('Unit' in scoped_blocks[r])
+            self.assertTrue('Requirements' in scoped_blocks[r])
+            self.assertTrue('Sensor Elements' in scoped_blocks[r])
+            self.assertTrue('Device Channels' in scoped_blocks[r])
+            self.assertTrue('Profiles' in scoped_blocks[r])
+            self.assertTrue('Profiles' in scoped_blocks[r])
         return
+
+    def test_parse_generic(self):
+        filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
+        scoped_blocks = detl.parsing.common.split_blocks(filepath)
+        attr, df = detl.parsing.common.parse_generic('Info', scoped_blocks[None]['Info'], scope=None)
+        self.assertEqual(attr, '_info')
+        self.assertIsInstance(df, pandas.DataFrame)
+        self.assertEqual(len(df), 71)
+        self.assertEqual(len(df.columns), 7)
     
-    def test_number_of_dataframes(self):
-        for idx, fp in enumerate(basic_parsing_testfiles):
-            ddata = detl.parse(fp)
-            self.assertEqual(len(ddata.data), basic_parsing_number_of_dfs[idx])
-        return
+    def test_parse_generic_T(self):
+        filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
+        scoped_blocks = detl.parsing.common.split_blocks(filepath)
+        attr, df = detl.parsing.common.parse_generic_T('Info', scoped_blocks[None]['Info'], scope=None)
+        self.assertEqual(attr, '_info')
+        self.assertIsInstance(df, pandas.DataFrame)
+        self.assertEqual(len(df), 7)
+        self.assertEqual(len(df.columns), 71)
     
-    def test_dataframe_row_count(self):
-        for idx, fp in enumerate(basic_parsing_testfiles):
+    def test_transform_to_dwdata(self):
+        filepath = pathlib.Path('tests', 'testfiles', 'short_CTPC06280.Control.csv')
+        scoped_blocks = detl.parsing.common.split_blocks(filepath)
+        dd = detl.parsing.common.transform_to_dwdata(scoped_blocks, detl.parsing.dw4.BLOCKPARSERS, detl.DASwareVersion.V4)
+        self.assertIsInstance(dd, detl.DWData)
+        self.assertIsInstance(dd, dict)
+        self.assertEqual(dd.version, detl.DASwareVersion.V4)
+
+
+class TestDW4Parsing(unittest.TestCase):
+    def test_trackdata_row_count(self):
+        for fp, row_counts, nunits in zip(basic_parsing_testfiles, basic_parsing_row_counts, basic_parsing_number_of_dfs):
             ddata = detl.parse(fp)
-            for u_idx, item in ddata.data.items():
-                self.assertEqual(
-                    len(item.index), 
-                    basic_parsing_row_counts[idx][u_idx-1]
-                )
+            for r, nrows in zip(range(1, nunits + 1), row_counts):
+                self.assertTrue(r in ddata)
+                self.assertIsNotNone(ddata[r].trackdata)
+                self.assertEqual(len(ddata[r].trackdata), nrows)
         return
 
 
