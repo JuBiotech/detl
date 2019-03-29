@@ -8,7 +8,7 @@ test-detl:
   stage: test
   image: python:3.6
   script:
-    - cd detl && python setup.py develop && cd ..
+    - cd detl && python setup.py bdist_wheel && pip install dist/*.whl && cd ..
     - python -m unittest discover -s tests -v
 
 
