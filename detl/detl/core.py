@@ -1,11 +1,143 @@
 """Specifies the base types for parsing and representing DASware data."""
 import abc
 import enum
+import pandas
 import pathlib
 
 
-class DWData(object):
-    pass
+class DASwareVersion(enum.Enum):
+    V4 = 'v4'
+    V5 = 'v5'
+
+
+class DWData(dict):
+    """Standardized data type for DASGIP data."""
+    def __init__(self, version:DASwareVersion):
+        self._version = version
+        self._info = None
+        self._coreinfo = None
+        self._projectinfo = None
+        self._trackinfo = None
+        self._events = None
+        self._fb_pro = None
+        self._procedure = None
+        self._profile_columns = None
+        self._plant = None
+        self._units = None
+        self._sensors = None
+        self._modules = None
+        self._external_servers = None
+        self._external_values = None
+        self._internal_values = None
+        
+    @property
+    def version(self) -> DASwareVersion:
+    	return self._version
+
+    @property
+    def info(self) -> pandas.DataFrame:
+        return self._info
+
+    @property
+    def coreinfo(self) -> pandas.DataFrame:
+        return self._coreinfo
+
+    @property
+    def projectinfo(self) -> pandas.DataFrame:
+        return self._projectinfo
+
+    @property
+    def tracks(self) -> pandas.DataFrame:
+        return self._trackinfo
+
+    @property
+    def events(self) -> pandas.DataFrame:
+        return self._events
+
+    @property
+    def fb_pro(self) -> pandas.DataFrame:
+        return self._fb_pro
+
+    @property
+    def procedure(self) -> pandas.DataFrame:
+        return self._procedure
+
+    @property
+    def profile_columns(self) -> pandas.DataFrame:
+        return self._profile_columns
+
+    @property
+    def plant(self) -> pandas.DataFrame:
+        return self._plant
+
+    @property
+    def units(self) -> pandas.DataFrame:
+        return self._units
+
+    @property
+    def sensors(self) -> pandas.DataFrame:
+        return self._sensors
+
+    @property
+    def modules(self) -> pandas.DataFrame:
+        return self._modules
+    
+    @property
+    def external_servers(self) -> pandas.DataFrame:
+        return self._external_servers
+
+    @property
+    def external_values(self) -> pandas.DataFrame:
+        return self._external_values
+
+    @property
+    def internal_values(self) -> pandas.DataFrame:
+        return self._internal_values
+
+
+class ReactorData(object):
+
+    def __init__(self, id:int):
+        self._id = id
+        self._setup = None
+        self._unit = None
+        self._requirements = None
+        self._sensor_elements = None
+        self._device_channels = None
+        self._profiles = None
+        self._trackdata = None
+
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @property
+    def setup(self) -> pandas.DataFrame:
+        return self._setup
+    
+    @property
+    def unit(self) -> pandas.DataFrame:
+        return self._unit
+    
+    @property
+    def requirements(self) -> pandas.DataFrame:
+        return self._requirements
+
+    @property
+    def sensor_elements(self) -> pandas.DataFrame:
+        return self._sensor_elements
+
+    @property
+    def device_channels(self) -> pandas.DataFrame:
+        return self._device_channels
+
+    @property
+    def profiles(self) -> pandas.DataFrame:
+        return self._profiles
+
+    @property
+    def trackdata(self) -> pandas.DataFrame:
+        return self._trackdata
 
 
 class DASwareParser(object):
@@ -22,7 +154,3 @@ class DASwareParser(object):
         """
         raise NotImplementedError('Whoever implemented {} screwed up.'.format(self.__class__.__name__))
 
-
-class DASwareVersion(enum.Enum):
-    V4 = 'v4'
-    V5 = 'v5'

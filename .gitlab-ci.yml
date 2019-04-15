@@ -8,8 +8,8 @@ test-detl:
   stage: test
   image: python:3.6
   script:
-    - cd detl && python setup.py develop && cd ..
-    - cd tests && python -m unittest -v
+    - cd detl && python setup.py bdist_wheel && pip install dist/*.whl && cd ..
+    - python -m unittest discover -s tests -v
 
 
 coverage-detl:
@@ -18,7 +18,7 @@ coverage-detl:
   script:
     - cd detl && python setup.py develop && cd ..
     - pip install coverage
-    - cd tests && coverage run tests.py && coverage report -m
+    - coverage run tests/tests.py && coverage report -m
 
 
 

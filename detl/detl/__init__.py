@@ -32,7 +32,7 @@ def get_parser(filepath) -> DASwareParser:
 
     version = None
 
-    if len(lines) > 2 and lines[2].startswith('FngArchiv;4.0.1'):
+    if len(lines) > 2 and lines[2].startswith('"FngArchiv";"4.0.1"'):
         version = DASwareVersion.V4
     elif len(lines) > 2 and lines[2].startswith('"FngArchiv";"5.0.0"'):
         version = DASwareVersion.V5
