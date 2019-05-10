@@ -33,7 +33,7 @@ class DWData(dict):
     @property
     def version(self) -> DASwareVersion:
         """Specifies which DASWARE version was used."""
-    	return self._version
+        return self._version
 
     @property
     def info(self) -> pandas.DataFrame:
