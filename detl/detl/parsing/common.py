@@ -6,8 +6,10 @@ import pandas
 import re
 from io import StringIO
 import warnings
+import datetime
 
 from .. import core
+from . import utils
 
 logger = logging.getLogger('detl.parsing.common')
 
@@ -98,3 +100,52 @@ def parse_profiles(header, block, scope):
 
 def parse_profile_columns(header, block, scope):
     raise NotImplementedError()
+
+
+def transform_trackdata(trackdata:pandas.DataFrame, timeshift_to_utc_in_min:float, columnmapping:dict) -> pandas.DataFrame:
+    """Parses trackdata to an useful DataFrame.
+
+    Args:
+        trackdata (pandas.DataFrame): Trackdata derived from DASGIP raw data file
+        timeshift_to_utc_in_min (float): Time difference to UTC in minutes as stated by DASGIP raw data file
+        columnmapping (dict): Mapping from trackdata column names to reasonable column names
+
+    Returns:
+        transformed_data (pandas.DataFrame): DataFrame with structured data
+    """
+    transformed_data = pandas.DataFrame(
+        index=trackdata.index,
+        columns=['timestamp', 'duration', 'process_time'],
+    )
+    transformed_data.loc[:, 'timestamp'] = trackdata.loc[:, 'Timestamp'].apply(
+        utils.dwtimestamp_to_utc, timeshift_to_utc_in_min=timeshift_to_utc_in_min
+    )
+    transformed_data.loc[:, 'duration'] = trackdata.loc[:, 'Duration'] * 24
+
+    magic_time = datetime.datetime.strptime('1899-12-30 00:00:00', '%Y-%m-%d %H:%M:%S')
+    switch = False
+    ser = trackdata.filter(regex='.*Inoculation Time.*', axis='columns').squeeze()
+    process_time = numpy.full(len(ser), numpy.nan)
+
+    if not ser.empty:
+        for i in range(len(ser)):
+            if pandas.notna(ser[i]):
+                td = datetime.datetime.strptime(ser[i], '%Y-%m-%d %H:%M:%S') - magic_time
+                
+                if (not switch) and (td.total_seconds() > 0):
+                    switch = True
+                    process_time[i-1] = float(0)
+                
+                if switch:
+                    process_time[i] = td.total_seconds() / 3600
+            
+    transformed_data.loc[:, 'process_time'] = process_time
+
+    for key, reg in columnmapping.items():
+        new_data = trackdata.filter(regex=reg, axis='columns').squeeze()
+        if (not new_data.empty) and (not new_data.isnull().all()):
+            transformed_data.loc[:, key] = new_data
+
+    transformed_data = transformed_data.fillna(method='ffill')
+
+    return transformed_data

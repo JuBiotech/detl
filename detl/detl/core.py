@@ -106,6 +106,7 @@ class ReactorData(object):
         self._device_channels = None
         self._profiles = None
         self._trackdata = None
+        self._dataframe = None
 
     @property
     def id(self) -> int:
@@ -138,6 +139,10 @@ class ReactorData(object):
     @property
     def trackdata(self) -> pandas.DataFrame:
         return self._trackdata
+
+    @property
+    def dataframe(self) -> pandas.DataFrame:
+        return self._dataframe
 
 
 class DASwareParser(object):

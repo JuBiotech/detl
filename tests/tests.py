@@ -3,6 +3,7 @@ import numpy
 import pathlib
 import pandas
 import unittest
+import datetime
 
 import detl
 
@@ -134,6 +135,17 @@ class TestDW4Parsing(unittest.TestCase):
                 self.assertEqual(len(ddata[r].trackdata), nrows)
         return
 
+    def test_trackdata_transformation(self):
+        ddata = detl.parse(v4_testfiles[0])
+
+        testtimestamp = datetime.datetime(2016, 3, 10, 15, 38, 8, tzinfo=datetime.timezone.utc)
+        self.assertEqual(ddata[4].dataframe.loc[2878, 'timestamp'], testtimestamp)
+
+        self.assertAlmostEqual(ddata[1].dataframe.loc[2798, 'duration'], 23.325, places=3)
+        self.assertAlmostEqual(ddata[2].dataframe.loc[4513, 'off-gas_pv'], 31.675, places=3)
+        self.assertAlmostEqual(ddata[3].dataframe.loc[1472, 'temperature_pv'], 30.011, places=3)
+        self.assertAlmostEqual(ddata[4].dataframe.loc[3475, 'pump_a_volume_pv'], 0.622, places=3)
+
 
 class TestDW5Parsing(unittest.TestCase):
     def test_trackdata_row_count(self):
@@ -144,6 +156,17 @@ class TestDW5Parsing(unittest.TestCase):
                 self.assertIsNotNone(ddata[r].trackdata)
                 self.assertEqual(len(ddata[r].trackdata), nrows)
         return
+
+    def test_trackdata_transformation(self):
+        ddata = detl.parse(v5_testfiles[1])
+
+        testtimestamp = datetime.datetime(2018, 12, 21, 3, 7, 27, tzinfo=datetime.timezone.utc)
+        self.assertEqual(ddata[2].dataframe.loc[14596, 'timestamp'], testtimestamp)
+        
+        self.assertAlmostEqual(ddata[1].dataframe.loc[11359, 'aeration_x_co2_pv'], 0.034, places=3)
+        self.assertAlmostEqual(ddata[2].dataframe.loc[4128, 'stirrer_speed_pv'], 1059.382, places=3)
+        self.assertAlmostEqual(ddata[3].dataframe.loc[13387, 'duration'], 37.238, places=3)
+        self.assertAlmostEqual(ddata[4].dataframe.loc[9400, 'do_sp'], 30.0, places=3)
 
 
 
