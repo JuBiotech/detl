@@ -32,14 +32,17 @@ class DWData(dict):
         
     @property
     def version(self) -> DASwareVersion:
-    	return self._version
+        """Specifies which DASWARE version was used."""
+        return self._version
 
     @property
     def info(self) -> pandas.DataFrame:
+        """Contains version numbers of software modules."""
         return self._info
 
     @property
     def coreinfo(self) -> pandas.DataFrame:
+        """Information about DASWARE and timezone settings."""
         return self._coreinfo
 
     @property
@@ -48,10 +51,12 @@ class DWData(dict):
 
     @property
     def tracks(self) -> pandas.DataFrame:
+        """Metadata about logging settings."""
         return self._trackinfo
 
     @property
     def events(self) -> pandas.DataFrame:
+        """Table of events that happened during the process."""
         return self._events
 
     @property
@@ -60,6 +65,7 @@ class DWData(dict):
 
     @property
     def procedure(self) -> pandas.DataFrame:
+        """Metadata of the experiment"""
         return self._procedure
 
     @property
@@ -68,14 +74,17 @@ class DWData(dict):
 
     @property
     def plant(self) -> pandas.DataFrame:
+        """Metadata of the hardware"""
         return self._plant
 
     @property
     def units(self) -> pandas.DataFrame:
+        """Metadata of the reactor units"""
         return self._units
 
     @property
     def sensors(self) -> pandas.DataFrame:
+        """Metadata of the connected sensors"""
         return self._sensors
 
     @property
@@ -96,7 +105,7 @@ class DWData(dict):
 
 
 class ReactorData(object):
-
+    """Data structure containing data from one reactor."""
     def __init__(self, id:int):
         self._id = id
         self._setup = None
@@ -110,14 +119,17 @@ class ReactorData(object):
 
     @property
     def id(self) -> int:
+        """Number of the reactor."""
         return self._id
 
     @property
     def setup(self) -> pandas.DataFrame:
+        """Dataframe of overall process information."""
         return self._setup
     
     @property
     def unit(self) -> pandas.DataFrame:
+        """Properties of the reactor."""
         return self._unit
     
     @property
@@ -126,6 +138,7 @@ class ReactorData(object):
 
     @property
     def sensor_elements(self) -> pandas.DataFrame:
+        """Table of connected sensors."""
         return self._sensor_elements
 
     @property
@@ -138,10 +151,12 @@ class ReactorData(object):
 
     @property
     def trackdata(self) -> pandas.DataFrame:
+        """Contains timeseries of mass flows."""
         return self._trackdata
 
     @property
     def dataframe(self) -> pandas.DataFrame:
+        """Primary table of setpoint (SP) and actual (PV) control parameters."""
         return self._dataframe
 
 
