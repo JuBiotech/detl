@@ -133,6 +133,6 @@ class DASware5Parser(core.DASwareParser):
         
         timeshift_in_min = int(dd.coreinfo.loc[dd.coreinfo.index[dd.coreinfo.loc[:, 'Product'] == 'TimezoneBias'], 'Version'])
         for _, reactor in dd.items():
-            reactor._dataframe = common.transform_trackdata(reactor.trackdata, timeshift_in_min, columnmapping)
+            reactor._dataframe = common.transform_trackdata(reactor.trackdata, timeshift_in_min, columnmapping, core.DASwareVersion.V5)
 
         return dd

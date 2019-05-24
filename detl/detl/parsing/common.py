@@ -102,13 +102,14 @@ def parse_profile_columns(header, block, scope):
     raise NotImplementedError()
 
 
-def transform_trackdata(trackdata:pandas.DataFrame, timeshift_to_utc_in_min:float, columnmapping:dict) -> pandas.DataFrame:
+def transform_trackdata(trackdata:pandas.DataFrame, timeshift_to_utc_in_min:float, columnmapping:dict, version:core.DASwareVersion) -> pandas.DataFrame:
     """Parses trackdata to an useful DataFrame.
 
     Args:
         trackdata (pandas.DataFrame): Trackdata derived from DASGIP raw data file
         timeshift_to_utc_in_min (float): Time difference to UTC in minutes as stated by DASGIP raw data file
         columnmapping (dict): Mapping from trackdata column names to reasonable column names
+        version (core.DASwareVersion): inform about the DASware version of the file that is being processed
 
     Returns:
         transformed_data (pandas.DataFrame): DataFrame with structured data
@@ -124,7 +125,12 @@ def transform_trackdata(trackdata:pandas.DataFrame, timeshift_to_utc_in_min:floa
 
     magic_time = datetime.datetime.strptime('1899-12-30 00:00:00', '%Y-%m-%d %H:%M:%S')
     switch = False
-    ser = trackdata.filter(regex='.*Inoculation Time.*', axis='columns').squeeze()
+    if version == core.DASwareVersion.V4:
+        ser = trackdata.filter(regex='.*Inoculation Time.*', axis='columns').squeeze()
+    elif version == core.DASwareVersion.V5:
+        ser = trackdata.filter(regex='.*InoculationTime.*', axis='columns').squeeze()
+    else:
+        raise NotImplementedError(f'Unknown DASwareVersion: {version}')
     process_time = numpy.full(len(ser), numpy.nan)
 
     if not ser.empty:
@@ -138,7 +144,7 @@ def transform_trackdata(trackdata:pandas.DataFrame, timeshift_to_utc_in_min:floa
                 
                 if switch:
                     process_time[i] = td.total_seconds() / 3600
-            
+                    
     transformed_data.loc[:, 'process_time'] = process_time
 
     for key, reg in columnmapping.items():
