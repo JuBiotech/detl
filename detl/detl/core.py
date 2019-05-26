@@ -3,6 +3,7 @@ import abc
 import enum
 import pandas
 import pathlib
+import numpy
 
 
 class DASwareVersion(enum.Enum):
@@ -158,6 +159,22 @@ class ReactorData(object):
     def dataframe(self) -> pandas.DataFrame:
         """Primary table of setpoint (SP) and actual (PV) control parameters."""
         return self._dataframe
+
+    def get_closest_data(self, points:numpy.array, reference:str='process time') -> pandas.DataFrame:
+        """Analyzes a raw DASware CSV file and selects an appropiate parser.
+
+        Args:
+            points (numpy.array): the data from readings closest to these points will be returned
+            reference (str): tame of the column to look for points
+
+        Returns:
+            filtered_data: DataFrame containing data closest to the given points
+
+        Raises:
+            KeyError: when the reference column is not in the DataFrame
+        """
+
+        return
 
 
 class DASwareParser(object):
