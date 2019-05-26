@@ -160,12 +160,12 @@ class ReactorData(object):
         """Primary table of setpoint (SP) and actual (PV) control parameters."""
         return self._dataframe
 
-    def get_closest_data(self, points:numpy.array, reference:str='process time') -> pandas.DataFrame:
-        """Analyzes a raw DASware CSV file and selects an appropiate parser.
+    def get_closest_data(self, points:numpy.array, reference:str='process_time') -> pandas.DataFrame:
+        """Returns a subset of the reactor data at points closest to the given ones.
 
         Args:
             points (numpy.array): the data from readings closest to these points will be returned
-            reference (str): tame of the column to look for points
+            reference (str): name of the column to look for points
 
         Returns:
             filtered_data: DataFrame containing data closest to the given points
@@ -173,8 +173,12 @@ class ReactorData(object):
         Raises:
             KeyError: when the reference column is not in the DataFrame
         """
+        if reference not in self.dataframe.columns:
+            raise KeyError('Refernce column not in DataFrame')
 
-        return
+        idx = [abs(self.dataframe.loc[:, reference] - p).idxmin() for p in points]
+
+        return self.dataframe.loc[idx]
 
 
 class DASwareParser(object):
