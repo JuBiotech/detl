@@ -161,7 +161,7 @@ class TestDW5Parsing(unittest.TestCase):
     def test_trackdata_transformation(self):
         ddata = detl.parse(v5_testfiles[1])
 
-        testtimestamp = datetime.datetime(2018, 12, 21, 3, 7, 27, tzinfo=datetime.timezone.utc)
+        testtimestamp = datetime.datetime(2018, 12, 21, 1, 7, 27, tzinfo=datetime.timezone.utc)
         self.assertEqual(ddata[2].dataframe.loc[14596, 'timestamp'], testtimestamp)
         
         self.assertAlmostEqual(ddata[1].dataframe.loc[11359, 'aeration_x_co2_pv'], 0.034, places=3)
