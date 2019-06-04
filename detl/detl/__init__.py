@@ -3,7 +3,7 @@
 from . core import DASwareVersion, DWData, DASwareParser
 from . import parsing
 
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 
 parsers = {
     DASwareVersion.V4: parsing.dw4.DASware4Parser,
