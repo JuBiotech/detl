@@ -171,6 +171,22 @@ class TestDW5Parsing(unittest.TestCase):
         self.assertAlmostEqual(ddata[4].dataframe.loc[9400, 'do_sp'], 30.0, places=3)
 
 
+class TestClosestDataLookup(unittest.TestCase):
+    def test_dw4(self):
+        ddata = detl.parse(v4_testfiles[0])
+        points = numpy.array([0, 5, 15, 1999])
+        expected_output = numpy.array([1000.027, 1003.670, 1026.961, 1034.168])
+
+        looked_up_data = ddata[1].get_closest_data(points)
+        [self.assertAlmostEqual(i, o, places=3) for i, o in zip(looked_up_data['volume_pv'], expected_output)]
+
+    def test_dw5(self):
+        ddata = detl.parse(v5_testfiles[0])
+        points = numpy.array([0, 4, 16, 100])
+        expected_output = numpy.array([0, 0.291, 5.481, 26.343])
+
+        looked_up_data = ddata[4].get_closest_data(points, reference='duration')
+        [self.assertAlmostEqual(i, o, places=3) for i, o in zip(looked_up_data['ctr_pv'], expected_output)]
 
 if __name__ == '__main__':
     unittest.main()
