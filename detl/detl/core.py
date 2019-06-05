@@ -174,7 +174,7 @@ class ReactorData(object):
             KeyError: when the reference column is not in the DataFrame
         """
         if reference not in self.dataframe.columns:
-            raise KeyError('Refernce column not in DataFrame')
+            raise KeyError('Reference column not in DataFrame')
 
         idx = [abs(self.dataframe.loc[:, reference] - p).idxmin() for p in points]
 
