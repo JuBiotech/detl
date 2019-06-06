@@ -138,7 +138,7 @@ class TestDW4Parsing(unittest.TestCase):
     def test_trackdata_transformation(self):
         ddata = detl.parse(v4_testfiles[0])
 
-        testtimestamp = datetime.datetime(2016, 3, 10, 15, 38, 8, tzinfo=datetime.timezone.utc)
+        testtimestamp = datetime.datetime(2016, 3, 10, 12, 38, 8, tzinfo=datetime.timezone.utc)
         self.assertEqual(ddata[4].dataframe.loc[2878, 'timestamp'], testtimestamp)
 
         self.assertAlmostEqual(ddata[1].dataframe.loc[2798, 'duration'], 23.325, places=3)
@@ -146,6 +146,17 @@ class TestDW4Parsing(unittest.TestCase):
         self.assertAlmostEqual(ddata[2].dataframe.loc[4513, 'off-gas_pv'], 31.675, places=3)
         self.assertAlmostEqual(ddata[3].dataframe.loc[1472, 'temperature_pv'], 30.011, places=3)
         self.assertAlmostEqual(ddata[4].dataframe.loc[3475, 'pump_a_volume_pv'], 0.622, places=3)
+        
+    def test_timestamp_parsing(self):
+        ddata = detl.parse(pathlib.Path(dir_testfiles, 'v4_NT-WMB-2.Control.csv'))
+        testtimestamp = datetime.datetime(2016, 3, 9, 15, 38, 31, tzinfo=datetime.timezone.utc)
+        self.assertEqual(ddata[1].dataframe.loc[0, 'timestamp'], testtimestamp)
+
+        ddata = detl.parse(pathlib.Path(dir_testfiles, 'v4_2018-07-26.Control.csv'))
+        testtimestamp = datetime.datetime(2018, 7, 26, 9, 53, 36, tzinfo=datetime.timezone.utc)
+        self.assertEqual(ddata[1].dataframe.loc[0, 'timestamp'], testtimestamp)
+
+        return
 
 
 class TestDW5Parsing(unittest.TestCase):
@@ -169,6 +180,12 @@ class TestDW5Parsing(unittest.TestCase):
         self.assertAlmostEqual(ddata[3].dataframe.loc[13387, 'duration'], 37.238, places=3)
         self.assertAlmostEqual(ddata[3].dataframe.loc[13387, 'process_time'], 36.3028, places=3)
         self.assertAlmostEqual(ddata[4].dataframe.loc[9400, 'do_sp'], 30.0, places=3)
+
+    def test_timestamp_parsing(self):
+        ddata = detl.parse(pathlib.Path(dir_testfiles, 'v5_short_CTPC06280.Control.csv'))
+        testtimestamp = datetime.datetime(2019, 2, 6, 9, 46, 52, tzinfo=datetime.timezone.utc)
+        self.assertEqual(ddata[1].dataframe.loc[0, 'timestamp'], testtimestamp)
+        return
 
 
 class TestClosestDataLookup(unittest.TestCase):
