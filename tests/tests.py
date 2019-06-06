@@ -152,7 +152,7 @@ class TestDW4Parsing(unittest.TestCase):
         testtimestamp = datetime.datetime(2016, 3, 9, 15, 38, 31, tzinfo=datetime.timezone.utc)
         self.assertEqual(ddata[1].dataframe.loc[0, 'timestamp'], testtimestamp)
 
-        ddata = detl.parse(pathlib.Path(dir_testfiles, 'v4_2018-07-26.Control.csv'))
+        ddata = detl.parse(pathlib.Path(dir_testfiles, 'v4_20180726.Control.csv'))
         testtimestamp = datetime.datetime(2018, 7, 26, 9, 53, 36, tzinfo=datetime.timezone.utc)
         self.assertEqual(ddata[1].dataframe.loc[0, 'timestamp'], testtimestamp)
 
