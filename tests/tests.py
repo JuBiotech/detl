@@ -138,7 +138,7 @@ class TestDW4Parsing(unittest.TestCase):
     def test_trackdata_transformation(self):
         ddata = detl.parse(v4_testfiles[0])
 
-        testtimestamp = datetime.datetime(2016, 3, 10, 12, 38, 8, tzinfo=datetime.timezone.utc)
+        testtimestamp = datetime.datetime(2016, 3, 10, 15, 38, 8, tzinfo=datetime.timezone.utc)
         self.assertEqual(ddata[4].dataframe.loc[2878, 'timestamp'], testtimestamp)
 
         self.assertAlmostEqual(ddata[1].dataframe.loc[2798, 'duration'], 23.325, places=3)
