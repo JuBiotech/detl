@@ -109,7 +109,7 @@ class DASware4Parser(core.DASwareParser):
         scoped_blocks = common.split_blocks(filepath)
         dd = common.transform_to_dwdata(scoped_blocks, BLOCKPARSERS, version=core.DASwareVersion.V5)
 
-        timeshift_in_min = int(dd.coreinfo.loc[dd.coreinfo.index[dd.coreinfo.loc[:, 'Product'] == 'TimezoneBias'], 'Version'])
+        timeshift_in_min = -int(dd.coreinfo.loc[dd.coreinfo.index[dd.coreinfo.loc[:, 'Product'] == 'TimezoneBias'], 'Version'])
         for _, reactor in dd.items():
             reactor._dataframe = common.transform_trackdata(reactor.trackdata, timeshift_in_min, columnmapping, core.DASwareVersion.V4)
 
