@@ -119,7 +119,7 @@ def transform_trackdata(trackdata:pandas.DataFrame, timeshift_to_utc_in_min:floa
         columns=['timestamp', 'duration', 'process_time'],
     )
     transformed_data.loc[:, 'timestamp'] = trackdata.loc[:, 'Timestamp'].apply(
-        utils.dwtimestamp_to_utc, timeshift_to_utc_in_min=timeshift_to_utc_in_min
+        utils.dwtimestamp_to_utc, timeshift_to_utc_in_min=-timeshift_to_utc_in_min
     )
     transformed_data.loc[:, 'duration'] = trackdata.loc[:, 'Duration'] * 24
 

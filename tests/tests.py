@@ -23,9 +23,9 @@ v4_trackdata_nrows = [
 ]
 
 v5_testfiles = [
-    pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv'),
-    pathlib.Path(dir_testfiles, 'medium_CTPC06110.20181219.Control.csv'),
-    pathlib.Path(dir_testfiles, 'long_CTPC06110.20190218.Control.csv'),
+    pathlib.Path(dir_testfiles, 'v5_short_CTPC06280.Control.csv'),
+    pathlib.Path(dir_testfiles, 'v5_medium_CTPC06110.20181219.Control.csv'),
+    pathlib.Path(dir_testfiles, 'v5_long_CTPC06110.20190218.Control.csv'),
 ]
 v5_nreactors = [
     4,
@@ -48,7 +48,7 @@ class TestParserSelection(unittest.TestCase):
         return
     
     def test_v5_detection(self):
-        parser = detl.get_parser(pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv'))
+        parser = detl.get_parser(pathlib.Path(dir_testfiles, 'v5_short_CTPC06280.Control.csv'))
         self.assertIsNotNone(parser)
         self.assertIsInstance(parser, detl.core.DASwareParser)
         self.assertIsInstance(parser, detl.parsing.dw5.DASware5Parser)
@@ -65,7 +65,7 @@ class TestCommonParsing(unittest.TestCase):
         with self.assertRaises(ValueError):
             detl.parsing.common.split_blocks(['bla'])
 
-        filepath = pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv')
+        filepath = pathlib.Path(dir_testfiles, 'v5_short_CTPC06280.Control.csv')
         
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
         self.assertEqual(len(scoped_blocks), 5)
@@ -99,7 +99,7 @@ class TestCommonParsing(unittest.TestCase):
         return
 
     def test_parse_generic(self):
-        filepath = pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv')
+        filepath = pathlib.Path(dir_testfiles, 'v5_short_CTPC06280.Control.csv')
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
         attr, df = detl.parsing.common.parse_generic('Info', scoped_blocks[None]['Info'], scope=None)
         self.assertEqual(attr, '_info')
@@ -108,7 +108,7 @@ class TestCommonParsing(unittest.TestCase):
         self.assertEqual(len(df.columns), 7)
     
     def test_parse_generic_T(self):
-        filepath = pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv')
+        filepath = pathlib.Path(dir_testfiles, 'v5_short_CTPC06280.Control.csv')
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
         attr, df = detl.parsing.common.parse_generic_T('Info', scoped_blocks[None]['Info'], scope=None)
         self.assertEqual(attr, '_info')
@@ -117,7 +117,7 @@ class TestCommonParsing(unittest.TestCase):
         self.assertEqual(len(df.columns), 71)
     
     def test_transform_to_dwdata_v5(self):
-        filepath = pathlib.Path(dir_testfiles, 'short_CTPC06280.Control.csv')
+        filepath = pathlib.Path(dir_testfiles, 'v5_short_CTPC06280.Control.csv')
         scoped_blocks = detl.parsing.common.split_blocks(filepath)
         dd = detl.parsing.common.transform_to_dwdata(scoped_blocks, detl.parsing.dw5.BLOCKPARSERS, detl.DASwareVersion.V5)
         self.assertIsInstance(dd, detl.DWData)
@@ -146,6 +146,17 @@ class TestDW4Parsing(unittest.TestCase):
         self.assertAlmostEqual(ddata[2].dataframe.loc[4513, 'off-gas_pv'], 31.675, places=3)
         self.assertAlmostEqual(ddata[3].dataframe.loc[1472, 'temperature_pv'], 30.011, places=3)
         self.assertAlmostEqual(ddata[4].dataframe.loc[3475, 'pump_a_volume_pv'], 0.622, places=3)
+        
+    def test_timestamp_parsing(self):
+        ddata = detl.parse(pathlib.Path(dir_testfiles, 'v4_NT-WMB-2.Control.csv'))
+        testtimestamp = datetime.datetime(2016, 3, 9, 15, 38, 31, tzinfo=datetime.timezone.utc)
+        self.assertEqual(ddata[1].dataframe.loc[0, 'timestamp'], testtimestamp)
+
+        ddata = detl.parse(pathlib.Path(dir_testfiles, 'v4_20180726.Control.csv'))
+        testtimestamp = datetime.datetime(2018, 7, 26, 9, 53, 36, tzinfo=datetime.timezone.utc)
+        self.assertEqual(ddata[1].dataframe.loc[0, 'timestamp'], testtimestamp)
+
+        return
 
 
 class TestDW5Parsing(unittest.TestCase):
@@ -170,6 +181,12 @@ class TestDW5Parsing(unittest.TestCase):
         self.assertAlmostEqual(ddata[3].dataframe.loc[13387, 'process_time'], 36.3028, places=3)
         self.assertAlmostEqual(ddata[4].dataframe.loc[9400, 'do_sp'], 30.0, places=3)
 
+    def test_timestamp_parsing(self):
+        ddata = detl.parse(pathlib.Path(dir_testfiles, 'v5_short_CTPC06280.Control.csv'))
+        testtimestamp = datetime.datetime(2019, 2, 6, 9, 46, 52, tzinfo=datetime.timezone.utc)
+        self.assertEqual(ddata[1].dataframe.loc[0, 'timestamp'], testtimestamp)
+        return
+
 
 class TestClosestDataLookup(unittest.TestCase):
     def test_dw4(self):
@@ -187,6 +204,7 @@ class TestClosestDataLookup(unittest.TestCase):
 
         looked_up_data = ddata[4].get_closest_data(points, reference='duration')
         [self.assertAlmostEqual(i, o, places=3) for i, o in zip(looked_up_data['ctr_pv'], expected_output)]
+
 
 if __name__ == '__main__':
     unittest.main()
