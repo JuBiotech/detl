@@ -111,15 +111,7 @@ class DASware4Parser(core.DASwareParser):
         scoped_blocks = common.split_blocks(filepath)
         dd = common.transform_to_dwdata(scoped_blocks, BLOCKPARSERS, version=core.DASwareVersion.V5)
 
-        timeshift_in_min = -int(dd.coreinfo.loc[dd.coreinfo.index[dd.coreinfo.loc[:, 'Product'] == 'TimezoneBias'], 'Version'])
-        
-        if timeshift_in_min > 0:
-            start_time = datetime.datetime.strptime(dd.projectinfo.loc['StartTimestamp', 0], '%Y-%m-%d %H:%M:%S')
-            aware_start_time = pytz.timezone('Europe/Berlin').localize(start_time)
-            dst_shift = aware_start_time.dst().seconds / 60
-            timeshift_in_min += dst_shift
-
         for _, reactor in dd.items():
-            reactor._dataframe = common.transform_trackdata(reactor.trackdata, timeshift_in_min, columnmapping, core.DASwareVersion.V4)
+            reactor._dataframe = common.transform_trackdata(reactor.trackdata, columnmapping, core.DASwareVersion.V4)
 
         return dd
