@@ -3,7 +3,7 @@
 from . core import DASwareVersion, DWData, DASwareParser
 from . import parsing
 
-__version__ = '0.2.2'
+__version__ = '0.3.0'
 
 parsers = {
     DASwareVersion.V4: parsing.dw4.DASware4Parser,
@@ -44,11 +44,14 @@ def get_parser(filepath) -> DASwareParser:
     return parser_cls()
 
 
-def parse(filepath) -> DWData:
+def parse(filepath, *, inoculation_times:dict=None) -> DWData:
     """Parses a raw DASware CSV file into a DWData object.
 
     Args:
         filepath (str or pathlib.Path): path pointing to the file of interest
+        inoculation_times (dict or None): optional overrides for inoculation timepoints
+            key (int): reactor number
+            value (datetime.datetime): timezone-aware datetime object of the real inoculation time (computer clock!)
 
     Returns:
         DWData: parsed data object
@@ -58,4 +61,11 @@ def parse(filepath) -> DWData:
     """
     parser = get_parser(filepath)
     data = parser.parse(filepath)
+
+    if inoculation_times:
+        for r, dt_inoculate in inoculation_times.items():
+            new_process_time = (data[r].dataframe['timestamp'] - dt_inoculate).dt.total_seconds() / 3600
+            new_process_time[new_process_time < 0] = float('nan')
+            data[r].dataframe['process_time'] = new_process_time
+
     return data
