@@ -124,6 +124,16 @@ class TestCommonParsing(unittest.TestCase):
         self.assertIsInstance(dd, dict)
         self.assertEqual(dd.version, detl.DASwareVersion.V5)
 
+    def test_inoculation_times(self):
+        filepath = pathlib.Path(dir_testfiles, 'v4_NT-WMB-2.Control.csv')
+        dd = detl.parse(filepath, inoculation_times={
+            1: datetime.datetime(2016, 3, 9, 16,38,31, tzinfo=datetime.timezone.utc),
+            2: datetime.datetime(2016, 3, 9, 16,50,31, tzinfo=datetime.timezone.utc)
+        })
+        self.assertEqual(dd[1].dataframe.process_time[0], 0)
+        self.assertTrue(numpy.isnan(dd[3].dataframe.process_time[0]))
+        self.assertTrue(numpy.isnan(dd[2].dataframe.process_time[0]))
+        return
 
 class TestDW4Parsing(unittest.TestCase):
     def test_trackdata_row_count(self):
