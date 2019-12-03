@@ -75,7 +75,7 @@ def transform_to_dwdata(scoped_blocks:dict, blockparsers:dict, version:core.DASw
                     else:
                         setattr(dd[scope], attr, df)
                 except NotImplementedError as ex:
-                    logger.debug(f'scope {scope}: Failed to parse block "{header}" is not implemented')
+                    logger.debug(f'scope {scope}: Parsing function for "{header}" is not implemented')
                 except:
                     logger.warning(f'scope {scope}: Failed to parse block "{header}"')
     return dd
