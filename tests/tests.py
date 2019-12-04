@@ -208,5 +208,24 @@ class TestClosestDataLookup(unittest.TestCase):
         [self.assertAlmostEqual(i, o, places=3) for i, o in zip(looked_up_data['ctr_pv'], expected_output)]
 
 
+class TestGetNarrowData(unittest.TestCase):
+    def test_with_process_time(self):
+        ddata = detl.parse(v4_testfiles[0])
+        nd = ddata.get_narrow_data()
+        self.assertAlmostEqual(nd.loc[5643, 'temperature_pv'], 30.017)
+        self.assertAlmostEqual(nd.loc[25146, 'time'], 23.8967)
+
+    def test_with_duration(self):
+        ddata = detl.parse(v4_testfiles[0])
+        nd = ddata.get_narrow_data(kdim='duration')
+        self.assertAlmostEqual(nd.loc[20456, 'temperature_sp'], 30.017)
+        self.assertAlmostEqual(nd.loc[15643, 'time'], 39.35)
+
+    def test_kdim_setting(self):
+        ddata = detl.parse(v4_testfiles[0])
+        with self.assertRaises(KeyError):
+            ddata.get_narrow_data(kdim='volume_pv')
+
+
 if __name__ == '__main__':
     unittest.main()
