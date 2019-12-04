@@ -110,7 +110,9 @@ class DWData(dict):
         Args:
             kdim (str): name of the time axis which will be the time axis in the new format.
                         Can be 'timestamp', 'duration', or 'process_time'. 'process_time' will
-                        drop all data before valid time information is available.
+                        drop all data before valid time information is available. 
+                        'duration' and 'process_time' will drop the timestamp information to get a clean 
+                        float-type value column.
 
         Returns:
             narrow_data: DataFrame containing all data in a narrow format
@@ -123,9 +125,15 @@ class DWData(dict):
                 
         narrow_data = pandas.DataFrame()
         for reactor_id in self:
-            _df = self[reactor_id].dataframe.dropna() if kdim == 'process_time' else self[reactor_id].dataframe
-            _df = _df.melt(id_vars=kdim)
+            if kdim == 'process_time':
+                _df = self[reactor_id].dataframe.dropna().drop('timestamp', axis='columns').melt(id_vars=kdim)
+            elif kdim == 'duration':
+                _df = self[reactor_id].dataframe.drop('timestamp', axis='columns').melt(id_vars=kdim)
+            else:
+                _df = self[reactor_id].dataframe.melt(id_vars=kdim)
+
             _df['reactor'] = reactor_id
+            _df = _df.astype({'value': float})
             narrow_data = narrow_data.append(_df, ignore_index=True)
             
         narrow_data = narrow_data.rename({kdim: 'time'}, axis='columns')[['reactor', 'time', 'variable', 'value']]
