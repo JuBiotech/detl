@@ -104,6 +104,20 @@ class DWData(dict):
     def internal_values(self) -> pandas.DataFrame:
         return self._internal_values
 
+    def get_narrow_data(self, kdim:str='process_time'):
+        """Returns all data in a narrow DataFrame.
+
+        Args:
+            kdim (str): name of the time axis which will be the time axis in the new format.
+                        Can be 'timestamp', 'duration', or 'process_time'
+
+        Returns:
+            narrow_data: DataFrame containing all data in a narrow format
+
+        Raises:
+            KeyError: when the reference column is not in the DataFrame
+        """
+
 
 class ReactorData(object):
     """Data structure containing data from one reactor."""
