@@ -104,6 +104,42 @@ class DWData(dict):
     def internal_values(self) -> pandas.DataFrame:
         return self._internal_values
 
+    def get_narrow_data(self, kdim:str='process_time'):
+        """Returns all data in a narrow DataFrame.
+
+        Args:
+            kdim (str): name of the time axis which will be the time axis in the new format.
+                        Can be 'timestamp', 'duration', or 'process_time'. 'process_time' will
+                        drop all data before valid time information is available. 
+                        'duration' and 'process_time' will drop the timestamp information to get a clean 
+                        float-type value column.
+
+        Returns:
+            narrow_data: DataFrame containing all data in a narrow format
+
+        Raises:
+            KeyError: when the reference column is not in the DataFrame
+        """
+        if kdim not in {'timestamp', 'duration', 'process_time'}:
+            raise KeyError('kdim must be \'timestamp\', \'duration\', or \'process_time\'.')
+                
+        narrow_data = pandas.DataFrame()
+        for reactor_id in self:
+            if kdim == 'process_time':
+                _df = self[reactor_id].dataframe.dropna().drop('timestamp', axis='columns').melt(id_vars=kdim)
+            elif kdim == 'duration':
+                _df = self[reactor_id].dataframe.drop('timestamp', axis='columns').melt(id_vars=kdim)
+            else:
+                _df = self[reactor_id].dataframe.melt(id_vars=kdim)
+
+            _df['reactor'] = reactor_id
+            _df = _df.astype({'value': float})
+            narrow_data = narrow_data.append(_df, ignore_index=True)
+            
+        narrow_data = narrow_data.rename({kdim: 'time'}, axis='columns')[['reactor', 'time', 'variable', 'value']]
+
+        return narrow_data
+
 
 class ReactorData(object):
     """Data structure containing data from one reactor."""
