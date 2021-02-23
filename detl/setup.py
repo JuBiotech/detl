@@ -20,16 +20,17 @@ setuptools.setup(name = __packagename__,
         packages = setuptools.find_packages(), # this must be the same as the name above
         version=__version__,
         description='Package for parsing and transforming BioLector raw data.',
-        url='https://gitlab.fz-juelich.de/IBG-1/micropro/detl',
-        download_url = 'https://gitlab.fz-juelich.de/IBG-1/micropro/detl/tarball/%s' % __version__,
+        url='https://jugit.fz-juelich.de/IBG-1/micropro/detl',
+        download_url = 'https://jugit.fz-juelich.de/IBG-1/micropro/detl/tarball/%s' % __version__,
         author='IBG-1',
         copyright='(c) 2019 Forschungszentrum Jülich GmbH',
-        license='(c) 2019 Forschungszentrum Jülich GmbH',
+        license='GNU Affero General Public License v3.0',
         classifiers= [
             'Programming Language :: Python',
             'Operating System :: OS Independent',
-            'Programming Language :: Python :: 3.6',
-            'Intended Audience :: Developers'
+            'Programming Language :: Python :: 3.8',
+            'Intended Audience :: Science/Research',
+            'License :: OSI Approved :: GNU Affero General Public License v3',
         ],
         install_requires=[
             'pandas'
