@@ -1,9 +1,7 @@
-
-
-from . core import DASwareVersion, DWData, DASwareParser
 from . import parsing
+from .core import DASwareParser, DASwareVersion, DWData
 
-__version__ = '0.4.0'
+__version__ = "0.4.0"
 
 parsers = {
     DASwareVersion.V4: parsing.dw4.DASware4Parser,
@@ -24,10 +22,10 @@ def get_parser(filepath) -> DASwareParser:
         NotImlementedError: when the file contents do not match with a known DASware CSV style
     """
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             lines = f.readlines()
     except UnicodeDecodeError:
-        with open(filepath, 'r', encoding='latin-1') as f:
+        with open(filepath, "r", encoding="latin-1") as f:
             lines = f.readlines()
 
     version = None
@@ -37,14 +35,14 @@ def get_parser(filepath) -> DASwareParser:
     elif len(lines) > 2 and lines[2].startswith('"FngArchiv";"5.0.0"'):
         version = DASwareVersion.V5
     else:
-        raise NotImplementedError('Unsupported file version')
+        raise NotImplementedError("Unsupported file version")
 
     # select a parser for this version
     parser_cls = parsers[version]
     return parser_cls()
 
 
-def parse(filepath, *, inoculation_times:dict=None) -> DWData:
+def parse(filepath, *, inoculation_times: dict = None) -> DWData:
     """Parses a raw DASware CSV file into a DWData object.
 
     Args:
@@ -64,8 +62,10 @@ def parse(filepath, *, inoculation_times:dict=None) -> DWData:
 
     if inoculation_times:
         for r, dt_inoculate in inoculation_times.items():
-            new_process_time = (data[r].dataframe['timestamp'] - dt_inoculate).dt.total_seconds() / 3600
-            new_process_time[new_process_time < 0] = float('nan')
-            data[r].dataframe['process_time'] = new_process_time
+            new_process_time = (
+                data[r].dataframe["timestamp"] - dt_inoculate
+            ).dt.total_seconds() / 3600
+            new_process_time[new_process_time < 0] = float("nan")
+            data[r].dataframe["process_time"] = new_process_time
 
     return data

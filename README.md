@@ -14,4 +14,3 @@ To make changes to  `detl` you should install it in a dedicated Python environme
 1. clone it via `git clone https://jugit.fz-juelich.de/IBG-1/micropro/detl`
 2. `cd detl`
 3. `pip install -e .` to install it into your (activated!) Python environment
-
