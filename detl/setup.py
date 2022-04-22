@@ -37,5 +37,5 @@ setuptools.setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU Affero General Public License v3",
     ],
-    install_requires=["pandas"],
+    install_requires=["numpy", "pandas"],
 )
