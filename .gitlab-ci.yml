@@ -4,6 +4,15 @@ stages:
   - release
 
 
+pre-commit:
+  stage: build
+  image: python:3.9
+  script:
+    - pip install pre-commit
+    - pre-commit install
+    - pre-commit run --all
+
+
 test-detl:
   stage: test
   image: python:3.8

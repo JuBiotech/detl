@@ -1,0 +1,21 @@
+# Ignore all testing data
+# Ignore CSV files and Jupyter notebooks
+exclude: testfiles/|\.(csv|ipynb)$
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.1.0
+  hooks:
+    - id: check-merge-conflict
+    - id: check-toml
+    - id: check-yaml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+- repo: https://github.com/PyCQA/isort
+  rev: 5.10.1
+  hooks:
+    - id: isort
+      name: isort
+- repo: https://github.com/psf/black
+  rev: 22.3.0
+  hooks:
+    - id: black

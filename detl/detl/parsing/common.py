@@ -1,20 +1,21 @@
 import collections
-import logging
-import numpy
-import pathlib
-import pandas
-import re
-from io import StringIO
-import warnings
 import datetime
+import logging
+import pathlib
+import re
+import warnings
+from io import StringIO
+
+import numpy
+import pandas
 
 from .. import core
 from . import utils
 
-logger = logging.getLogger('detl.parsing.common')
+logger = logging.getLogger("detl.parsing.common")
 
 
-def split_blocks(filepath:pathlib.Path) -> dict:
+def split_blocks(filepath: pathlib.Path) -> dict:
     """Reads a CSV file and splits its contents into scoped blocks.
 
     Args:
@@ -24,11 +25,11 @@ def split_blocks(filepath:pathlib.Path) -> dict:
         scoped_blocks (dict): dicationary mapping scope to dictionary of blocks
     """
     if not isinstance(filepath, (str, pathlib.Path)):
-        raise ValueError('Please provide filepath either as str or pathlib.Path object')
+        raise ValueError("Please provide filepath either as str or pathlib.Path object")
 
     # split the entire file into table-blocks
     blocks = [[]]
-    with pathlib.Path(filepath).open(mode='r', errors='replace') as file:
+    with pathlib.Path(filepath).open(mode="r", errors="replace") as file:
         for line in file:
             if len(line) == 1:
                 blocks.append([])
@@ -53,11 +54,13 @@ def split_blocks(filepath:pathlib.Path) -> dict:
         blockheader = blockheader[2:-2]
         if scope:
             blockheader = blockheader.strip(str(scope))
-        scoped_blocks[scope][blockheader] = ''.join(blocklines[1:]).strip()
+        scoped_blocks[scope][blockheader] = "".join(blocklines[1:]).strip()
     return scoped_blocks
 
 
-def transform_to_dwdata(scoped_blocks:dict, blockparsers:dict, version:core.DASwareVersion) -> core.DWData:
+def transform_to_dwdata(
+    scoped_blocks: dict, blockparsers: dict, version: core.DASwareVersion
+) -> core.DWData:
     dd = core.DWData(version)
     for scope, blocks in scoped_blocks.items():
         if scope is not None and not scope in dd:
@@ -75,15 +78,17 @@ def transform_to_dwdata(scoped_blocks:dict, blockparsers:dict, version:core.DASw
                     else:
                         setattr(dd[scope], attr, df)
                 except NotImplementedError as ex:
-                    logger.debug(f'scope {scope}: Parsing function for "{header}" is not implemented')
+                    logger.debug(
+                        f'scope {scope}: Parsing function for "{header}" is not implemented'
+                    )
                 except:
                     logger.warning(f'scope {scope}: Failed to parse block "{header}"')
     return dd
 
 
 def parse_generic(header, block, scope):
-    df = pandas.read_csv(StringIO(block), sep=';')
-    attr = '_' + header.lower().replace(' ', '_').replace('-', '_')
+    df = pandas.read_csv(StringIO(block), sep=";")
+    attr = "_" + header.lower().replace(" ", "_").replace("-", "_")
     return (attr, df)
 
 
@@ -104,7 +109,9 @@ def parse_profile_columns(header, block, scope):
     raise NotImplementedError()
 
 
-def transform_trackdata(trackdata:pandas.DataFrame, columnmapping:dict, version:core.DASwareVersion) -> pandas.DataFrame:
+def transform_trackdata(
+    trackdata: pandas.DataFrame, columnmapping: dict, version: core.DASwareVersion
+) -> pandas.DataFrame:
     """Parses trackdata to an useful DataFrame.
 
     Args:
@@ -117,40 +124,42 @@ def transform_trackdata(trackdata:pandas.DataFrame, columnmapping:dict, version:
     """
     transformed_data = pandas.DataFrame(
         index=trackdata.index,
-        columns=['timestamp', 'duration', 'process_time'],
+        columns=["timestamp", "duration", "process_time"],
     )
-    transformed_data.loc[:, 'timestamp'] = trackdata.loc[:, 'Timestamp'].apply(utils.dwtimestamp_to_utc)
-    transformed_data.loc[:, 'duration'] = trackdata.loc[:, 'Duration'] * 24
+    transformed_data.loc[:, "timestamp"] = trackdata.loc[:, "Timestamp"].apply(
+        utils.dwtimestamp_to_utc
+    )
+    transformed_data.loc[:, "duration"] = trackdata.loc[:, "Duration"] * 24
 
-    magic_time = datetime.datetime.strptime('1899-12-30 00:00:00', '%Y-%m-%d %H:%M:%S')
+    magic_time = datetime.datetime.strptime("1899-12-30 00:00:00", "%Y-%m-%d %H:%M:%S")
     switch = False
     if version == core.DASwareVersion.V4:
-        ser = trackdata.filter(regex='.*Inoculation Time.*', axis='columns').squeeze()
+        ser = trackdata.filter(regex=".*Inoculation Time.*", axis="columns").squeeze()
     elif version == core.DASwareVersion.V5:
-        ser = trackdata.filter(regex='.*InoculationTime.*', axis='columns').squeeze()
+        ser = trackdata.filter(regex=".*InoculationTime.*", axis="columns").squeeze()
     else:
-        raise NotImplementedError(f'Unknown DASwareVersion: {version}')
+        raise NotImplementedError(f"Unknown DASwareVersion: {version}")
     process_time = numpy.full(len(ser), numpy.nan)
 
     if not ser.empty:
         for i in range(len(ser)):
             if pandas.notna(ser[i]):
-                td = datetime.datetime.strptime(ser[i], '%Y-%m-%d %H:%M:%S') - magic_time
-                
+                td = datetime.datetime.strptime(ser[i], "%Y-%m-%d %H:%M:%S") - magic_time
+
                 if (not switch) and (td.total_seconds() > 0):
                     switch = True
-                    process_time[i-1] = float(0)
-                
+                    process_time[i - 1] = float(0)
+
                 if switch:
                     process_time[i] = td.total_seconds() / 3600
-                    
-    transformed_data.loc[:, 'process_time'] = process_time
+
+    transformed_data.loc[:, "process_time"] = process_time
 
     for key, reg in columnmapping.items():
-        new_data = trackdata.filter(regex=reg, axis='columns').squeeze()
+        new_data = trackdata.filter(regex=reg, axis="columns").squeeze()
         if (not new_data.empty) and (not new_data.isnull().all()):
             transformed_data.loc[:, key] = new_data
 
-    transformed_data = transformed_data.fillna(method='ffill')
+    transformed_data = transformed_data.fillna(method="ffill")
 
     return transformed_data
