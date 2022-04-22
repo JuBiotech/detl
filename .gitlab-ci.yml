@@ -15,7 +15,7 @@ pre-commit:
 
 test-detl:
   stage: test
-  image: python:3.8
+  image: python:3.10
   script:
     - cd detl && python setup.py bdist_wheel && pip install dist/*.whl && cd ..
     - python -m unittest discover -s tests -v
@@ -23,7 +23,7 @@ test-detl:
 
 coverage-detl:
   stage: test
-  image: python:3.8
+  image: python:3.10
   script:
     - cd detl && python setup.py develop && cd ..
     - pip install coverage
@@ -33,7 +33,7 @@ coverage-detl:
 
 release-detl:
   stage: release
-  image: python:3.8
+  image: python:3.10
   script:
     - cd detl && python setup.py bdist_wheel && cp dist/*.whl ..
   artifacts:
