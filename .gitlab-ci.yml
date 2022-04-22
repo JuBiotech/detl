@@ -25,7 +25,7 @@ coverage-detl:
   stage: test
   image: python:3.10
   script:
-    - cd detl && python setup.py develop && cd ..
+    - cd detl && pip install -e . && cd ..
     - pip install coverage
     - coverage run tests/tests.py && coverage report -m
 
