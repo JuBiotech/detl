@@ -1,5 +1,7 @@
-[![pipeline status](https://jugit.fz-juelich.de/IBG-1/micropro/detl/badges/master/pipeline.svg)](https://jugit.fz-juelich.de/IBG-1/micropro/detl/commits/master)
-[![coverage report](https://jugit.fz-juelich.de/IBG-1/micropro/detl/badges/master/coverage.svg)](https://jugit.fz-juelich.de/IBG-1/micropro/detl/commits/master)
+[![PyPI version](https://img.shields.io/pypi/v/detl)](https://pypi.org/project/detl)
+[![pipeline](https://github.com/jubiotech/detl/workflows/pipeline/badge.svg)](https://github.com/jubiotech/detl/actions)
+[![coverage](https://codecov.io/gh/jubiotech/detl/branch/main/graph/badge.svg)](https://codecov.io/gh/jubiotech/detl)
+[![documentation](https://readthedocs.org/projects/detl/badge/?version=latest)](https://detl.readthedocs.io/en/latest/?badge=latest)
 
 
 # detl
