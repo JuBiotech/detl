@@ -8,11 +8,23 @@
 With `detl` you can analyze raw data export CSVs from DASware 4 or 5.
 
 ## Installation
-1. Head over to [Repository/Tags](https://jugit.fz-juelich.de/IBG-1/micropro/detl/tags) to view the list of releases & their release notes.
-2. download the Python Wheel via the button on the right and install it with `pip install detl-x.x-py3-none-any.whl`
+`detl` is available on PyPI:
+
+```shell
+pip install detl
+```
+
+Visit [Releases](https://github.com/JuBiotech/detl/releases) to find the latest release notes.
 
 ## For Developers
 To make changes to  `detl` you should install it in a dedicated Python environment.
-1. clone it via `git clone https://jugit.fz-juelich.de/IBG-1/micropro/detl`
+1. clone it via `git clone https://github.com/jubiotech/detl`
 2. `cd detl`
 3. `pip install -e .` to install it into your (activated!) Python environment
+
+Before making commits, please set up the `pre-commit` to automate the code style conventions:
+
+```shell
+pip install pre-commit
+pre-commit install
+```
