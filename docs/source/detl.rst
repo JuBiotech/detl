@@ -3,7 +3,7 @@
 
 This page describes the signatures of public API of the ``detl`` module.
 
-In 99 % of the cases, you'll be using ``detl.parse()``.
+In most cases, you'll be using ``detl.parse()``.
 
 .. automodule:: detl
 	:members:
