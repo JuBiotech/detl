@@ -156,6 +156,9 @@ class TestDW4Parsing(unittest.TestCase):
     def test_trackdata_transformation(self):
         ddata = detl.parse(v4_testfiles[0])
 
+        assert "pump_a_rate_sp" in ddata[1].dataframe.columns
+        assert "pump_b_rate_sp" in ddata[1].dataframe.columns
+
         self.assertAlmostEqual(ddata[1].dataframe.loc[2798, "duration"], 23.325, places=3)
         self.assertAlmostEqual(ddata[1].dataframe.loc[2798, "process_time"], 8.74667, places=3)
         self.assertAlmostEqual(ddata[2].dataframe.loc[4513, "off-gas_pv"], 31.675, places=3)
@@ -194,6 +197,9 @@ class TestDW5Parsing(unittest.TestCase):
 
     def test_trackdata_transformation(self):
         ddata = detl.parse(v5_testfiles[1])
+
+        assert "pump_a_rate_sp" in ddata[1].dataframe.columns
+        assert "pump_b_rate_sp" in ddata[1].dataframe.columns
 
         self.assertAlmostEqual(ddata[1].dataframe.loc[11359, "aeration_x_co2_pv"], 0.034, places=3)
         self.assertAlmostEqual(ddata[2].dataframe.loc[4128, "stirrer_speed_pv"], 1059.382, places=3)
