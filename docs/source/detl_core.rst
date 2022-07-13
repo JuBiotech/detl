@@ -1,7 +1,7 @@
 ``detl.core``
 -------------
 
-This page describes the data types that you get back from a ``detl.parse()`` call.
+This page describes the data types that are returned by a ``detl.parse()`` call.
 
 .. automodule:: detl.core
 	:members:
