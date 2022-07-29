@@ -11,7 +11,7 @@ With `detl` you can analyze raw data export CSVs from DASware 4 or 5.
 
 Create your `ddata` dictionary containing data for all vessels by using `bletl.parse()`.
 
-```
+```python
 ddata = detl.parse(
     pathlib.Path('v4_NT-WMB-2.Control.csv')
 )
@@ -19,7 +19,7 @@ ddata = detl.parse(
 
 `ddata` returns data for the given reactor vessels 1 to 4:
 
-```
+```python
 {1: <detl.core.ReactorData at 0x1d1f29421c8>,
  2: <detl.core.ReactorData at 0x1d1f3eccf88>,
  3: <detl.core.ReactorData at 0x1d1f3eccd08>,
