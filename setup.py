@@ -1,6 +1,8 @@
+import pathlib
 import setuptools
 
 __packagename__ = "detl"
+ROOT = pathlib.Path(__file__).parent
 
 
 def get_version():
@@ -37,5 +39,5 @@ setuptools.setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU Affero General Public License v3",
     ],
-    install_requires=["numpy", "pandas"],
+    install_requires=open(pathlib.Path(ROOT, "requirements.txt")).readlines(),
 )
