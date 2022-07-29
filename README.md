@@ -2,7 +2,7 @@
 [![pipeline](https://github.com/jubiotech/detl/workflows/pipeline/badge.svg)](https://github.com/jubiotech/detl/actions)
 [![coverage](https://codecov.io/gh/jubiotech/detl/branch/main/graph/badge.svg)](https://codecov.io/gh/jubiotech/detl)
 [![documentation](https://readthedocs.org/projects/detl/badge/?version=latest)](https://detl.readthedocs.io/en/latest/?badge=latest)
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6939620.svg)](https://doi.org/10.5281/zenodo.6939620)
 
 # detl
 With `detl` you can analyze raw data export CSVs from DASware 4 or 5.
@@ -47,4 +47,25 @@ Before making commits, please set up the `pre-commit` to automate the code style
 ```shell
 pip install pre-commit
 pre-commit install
+```
+
+# Usage and Citing
+`detl` is licensed under the [GNU Affero General Public License v3.0](https://github.com/JuBiotech/detl/blob/main/LICENSE.md).
+
+When using `detl` in your work, please cite the [corresponding software version](https://doi.org/10.5281/zenodo.6939620).
+
+```bibtex
+@software{detl,
+  author       = {Michael Osthege and
+                  Niklas Tenhaef and
+                  Valentin Steier and
+                  Alexander Reiter},
+  title        = {detl: A Python package for processing of DASware raw data exports},
+  month        = jul,
+  year         = 2022,
+  publisher    = {Zenodo},
+  version      = {v1.0.0},
+  doi          = {10.5281/zenodo.6939621},
+  url          = {https://doi.org/10.5281/zenodo.6939621}
+}
 ```
