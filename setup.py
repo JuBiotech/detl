@@ -1,4 +1,5 @@
 import pathlib
+
 import setuptools
 
 __packagename__ = "detl"
