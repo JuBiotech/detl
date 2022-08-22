@@ -30,7 +30,7 @@ setuptools.setup(
     description="Package for parsing and transforming DASware raw data exports.",
     url="https://github.com/JuBiotech/detl",
     author="IBG-1",
-    copyright="(c) 2019 Forschungszentrum Jülich GmbH",
+    copyright="(c) 2022 Forschungszentrum Jülich GmbH",
     license="GNU Affero General Public License v3.0",
     classifiers=[
         "Programming Language :: Python",
