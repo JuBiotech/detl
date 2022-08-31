@@ -27,11 +27,10 @@ setuptools.setup(
     name=__packagename__,
     packages=setuptools.find_packages(),  # this must be the same as the name above
     version=__version__,
-    description="Package for parsing and transforming BioLector raw data.",
-    url="https://jugit.fz-juelich.de/IBG-1/micropro/detl",
-    download_url="https://jugit.fz-juelich.de/IBG-1/micropro/detl/tarball/%s" % __version__,
+    description="Package for parsing and transforming DASware raw data exports.",
+    url="https://github.com/JuBiotech/detl",
     author="IBG-1",
-    copyright="(c) 2019 Forschungszentrum Jülich GmbH",
+    copyright="(c) 2022 Forschungszentrum Jülich GmbH",
     license="GNU Affero General Public License v3.0",
     classifiers=[
         "Programming Language :: Python",
