@@ -126,10 +126,8 @@ def transform_trackdata(
         index=trackdata.index,
         columns=["timestamp", "duration", "process_time"],
     )
-    transformed_data.loc[:, "timestamp"] = trackdata.loc[:, "Timestamp"].apply(
-        utils.dwtimestamp_to_utc
-    )
-    transformed_data.loc[:, "duration"] = trackdata.loc[:, "Duration"] * 24
+    transformed_data["timestamp"] = [utils.dwtimestamp_to_utc(t) for t in trackdata["Timestamp"]]
+    transformed_data["duration"] = trackdata["Duration"] * 24
 
     magic_time = datetime.datetime.strptime("1899-12-30 00:00:00", "%Y-%m-%d %H:%M:%S")
     switch = False
@@ -153,7 +151,7 @@ def transform_trackdata(
                 if switch:
                     process_time[i] = td.total_seconds() / 3600
 
-    transformed_data.loc[:, "process_time"] = process_time
+    transformed_data["process_time"] = process_time
 
     for key, reg in columnmapping.items():
         new_data = trackdata.filter(regex=reg, axis="columns").squeeze()

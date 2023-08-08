@@ -143,7 +143,7 @@ class DWData(dict):
 
             _df["reactor"] = reactor_id
             _df = _df.astype({"value": float})
-            narrow_data = narrow_data.append(_df, ignore_index=True)
+            narrow_data = pandas.concat([narrow_data, _df], ignore_index=True)
 
         narrow_data = narrow_data.rename({kdim: "time"}, axis="columns")[
             ["reactor", "time", "variable", "value"]
