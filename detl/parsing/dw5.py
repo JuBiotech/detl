@@ -131,6 +131,9 @@ class DASware5Parser(core.DASwareParser):
             filepath (str or pathlib.Path): path pointing to the file of interest
         """
         scoped_blocks = common.split_blocks(filepath)
+        scoped_blocks = {
+            key: value for (key, value) in scoped_blocks.items() if "TrackData" in list(value)
+        }
         dd = common.transform_to_dwdata(scoped_blocks, BLOCKPARSERS, version=core.DASwareVersion.V5)
 
         for _, reactor in dd.items():
