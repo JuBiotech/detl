@@ -43,8 +43,8 @@ def split_blocks(filepath: pathlib.Path) -> dict:
     scope = None
     for blocklines in blocks:
         blockheader = blocklines[0].strip()
-        setup_matches = re.findall(r'"\[Setup(\d)\]"', blockheader)
-        track_matches = re.findall(r'"\[TrackData(\d)\]"', blockheader)
+        setup_matches = re.findall(r'"\[Setup(\d+)\]"', blockheader)
+        track_matches = re.findall(r'"\[TrackData(\d+)\]"', blockheader)
         if len(track_matches) == 1:
             scope = int(track_matches[0])
         elif blockheader == '"[Events]"':
