@@ -17,15 +17,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "CLA Assistant"
-        if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+        if: (github.event.comment.body == 'recheck' || contains(github.event.comment.body, 'I have read the CLA Document and I hereby sign the CLA.')) || github.event_name == 'pull_request_target'
         uses: contributor-assistant/github-action@v2.3.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # The below token has repo scope for the project configured further below to store signatures.
           PERSONAL_ACCESS_TOKEN: ${{ secrets.JUBIOTECH_CLA_SIGNATURES }}
+          PATH_TO_CLA: 'https://github.com/jubiotech/detl/blob/main/CLA.md'
         with:
           path-to-signatures: 'signatures_detl.json'
-          path-to-document: 'https://github.com/jubiotech/detl/blob/main/CLA.md'
+          path-to-document: $PATH_TO_CLA
           # branch should not be protected
           branch: 'main'
           allowlist: dependabot[bot]
@@ -36,8 +37,19 @@ jobs:
           remote-repository-name: cla-signatures
           #create-file-commit-message: 'For example: Creating file for storing CLA Signatures'
           #signed-commit-message: 'For example: $contributorName has signed the CLA in $owner/$repo#$pullRequestNo'
-          #custom-notsigned-prcomment: 'pull request comment with Introductory message to ask new contributors to sign'
-          #custom-pr-sign-comment: 'The signature to be committed in order to sign the CLA'
+          custom-notsigned-prcomment: >
+              Thank you for your submission, we really appreciate it!
+              Like many open-source projects we ask that you sign our [Contributor License Agreement]($PATH_TO_CLA) before we can accept your contribution.
+              To sign, please post a comment based on the following template 👇
+          custom-pr-sign-comment: >
+              I have read the CLA Document and I hereby sign the CLA.
+
+              + [ ] The JuBiotech maintainers know my real name.
+
+              At least one of the following two applies:
+
+              + [ ] The JuBiotech maintainers know my current employer.
+              + [ ] I am making not making this contribution of behalf of my current employer.
           #custom-allsigned-prcomment: 'pull request comment when all contributors has signed, defaults to **CLA Assistant Lite bot** All Contributors have signed the CLA.'
           # 👇 prevent contributors from revoking signatures after the merge (this is also the default)
           lock-pullrequest-aftermerge: true
