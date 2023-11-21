@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "CLA Assistant"
-        if: (github.event.comment.body == 'recheck' || contains(github.event.comment.body, 'I have read the CLA Document and I hereby sign the CLA.')) || github.event_name == 'pull_request_target'
+        if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
         uses: contributor-assistant/github-action@v2.3.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -37,17 +37,27 @@ jobs:
           #signed-commit-message: 'For example: $contributorName has signed the CLA in $owner/$repo#$pullRequestNo'
           custom-notsigned-prcomment: >
               Thank you for your submission, we really appreciate it!
-              Like many open-source projects we ask that you sign our [Contributor License Agreement]($PATH_TO_CLA) before we can accept your contribution.
-              To sign, please post a comment based on the following template 👇
-          custom-pr-sign-comment: >
-              I have read the CLA Document and I hereby sign the CLA.
 
-              + [ ] The JuBiotech maintainers know my real name.
+              Like many open-source projects we ask that you sign our [Contributor License Agreement](${{ env.PATH_TO_CLA }}) before we can accept your contribution.
+              To sign, please post two separate comments based on the following templates 👇
+
+              1. Comment:
+
+              ----
+
+              \- [ ] The JuBiotech maintainers know my real name.
 
               At least one of the following two applies:
 
-              + [ ] The JuBiotech maintainers know my current employer.
-              + [ ] I am making not making this contribution of behalf of my current employer.
+              \- [ ] The JuBiotech maintainers know my current employer.
+
+              \- [ ] I am making not making this contribution of behalf of my current employer.
+
+              ----
+
+              2. Comment:
+          custom-pr-sign-comment: >
+              I have read the CLA Document and I hereby sign the CLA.
           #custom-allsigned-prcomment: 'pull request comment when all contributors has signed, defaults to **CLA Assistant Lite bot** All Contributors have signed the CLA.'
           # 👇 prevent contributors from revoking signatures after the merge (this is also the default)
           lock-pullrequest-aftermerge: true
