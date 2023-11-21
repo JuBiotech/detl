@@ -3,7 +3,7 @@
 Thank you for your interest in contributing to Forschungszentrum Jülich GmbH - Institute for Bio- and Geosciences: IBG-1's `detl` project ("We" or "Us").
 
 The purpose of this contributor agreement is to clarify and document the rights granted by contributors to Us.
-To make this document effective, please follow the instructions below. 
+To make this document effective, please follow the instructions below.
 
 # How to use this CLA
 
@@ -51,7 +51,7 @@ However, the Licensor will be liable under statutory product liability laws as f
 # Warranty
 
 The Material is a work in progress, which is continuously being improved by numerous Contributors.
-It is not a finished work and may therefore contain defects or "bugs" inherent to this type of development. 
+It is not a finished work and may therefore contain defects or "bugs" inherent to this type of development.
 
 For the above reason, the Material is provided on an "as is" basis and without warranties of any kind concerning the Material, including without limitation,
 merchantability, fitness for a particular purpose, absence of defects or errors, accuracy, non-infringement of intellectual property rights other than copyright.
