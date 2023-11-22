@@ -51,7 +51,8 @@ jobs:
 
               \- [ ] The JuBiotech maintainers know my current employer.
 
-              \- [ ] I am making not making this contribution on behalf of my current employer.
+              \- [ ] I am *not* making this contribution on behalf of my current employer.
+
 
 
               ----
