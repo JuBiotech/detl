@@ -8,7 +8,7 @@ on:
 # explicitly configure permissions, in case your GITHUB_TOKEN workflow permissions are set to read-only in repository settings
 permissions:
   actions: write
-  contents: write
+  contents: read
   pull-requests: write
   statuses: write
 
@@ -25,7 +25,7 @@ jobs:
           PERSONAL_ACCESS_TOKEN: ${{ secrets.JUBIOTECH_CLA_SIGNATURES }}
           PATH_TO_CLA: 'https://github.com/jubiotech/detl/blob/main/CLA.md'
         with:
-          path-to-signatures: 'signatures_detl.json'
+          path-to-signatures: 'signatures/version1/signatures_detl.json'
           path-to-document: $PATH_TO_CLA
           # branch should not be protected
           branch: 'main'
