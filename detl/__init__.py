@@ -1,7 +1,7 @@
 from . import parsing
 from .core import DASwareParser, DASwareVersion, DWData
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 parsers = {
     DASwareVersion.V4: parsing.dw4.DASware4Parser,
