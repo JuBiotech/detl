@@ -9,7 +9,7 @@ With `detl` you can analyze raw data export CSVs from DASware 4 or 5.
 
 # Code Example
 
-Create your `ddata` dictionary containing data for all vessels by using `bletl.parse()`.
+Create your `ddata` dictionary containing data for all vessels by using `detl.parse()`.
 
 ```python
 ddata = detl.parse(
