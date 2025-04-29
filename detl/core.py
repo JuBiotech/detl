@@ -2,6 +2,7 @@
 import abc
 import enum
 import pathlib
+from typing import Dict
 
 import numpy
 import pandas
@@ -12,7 +13,86 @@ class DASwareVersion(enum.Enum):
     V5 = "v5"
 
 
-class DWData(dict):
+class ReactorData(object):
+    """Data structure containing data from one reactor."""
+
+    def __init__(self, id: int):
+        self._id = id
+        self._setup = None
+        self._unit = None
+        self._requirements = None
+        self._sensor_elements = None
+        self._device_channels = None
+        self._profiles = None
+        self._trackdata = None
+        self._dataframe = None
+
+    @property
+    def id(self) -> int:
+        """Number of the reactor."""
+        return self._id
+
+    @property
+    def setup(self) -> pandas.DataFrame:
+        """Dataframe of overall process information."""
+        return self._setup
+
+    @property
+    def unit(self) -> pandas.DataFrame:
+        """Properties of the reactor."""
+        return self._unit
+
+    @property
+    def requirements(self) -> pandas.DataFrame:
+        return self._requirements
+
+    @property
+    def sensor_elements(self) -> pandas.DataFrame:
+        """Table of connected sensors."""
+        return self._sensor_elements
+
+    @property
+    def device_channels(self) -> pandas.DataFrame:
+        return self._device_channels
+
+    @property
+    def profiles(self) -> pandas.DataFrame:
+        return self._profiles
+
+    @property
+    def trackdata(self) -> pandas.DataFrame:
+        """Contains timeseries of mass flows."""
+        return self._trackdata
+
+    @property
+    def dataframe(self) -> pandas.DataFrame:
+        """Primary table of setpoint (SP) and actual (PV) control parameters."""
+        return self._dataframe
+
+    def get_closest_data(
+        self, points: numpy.array, reference: str = "process_time"
+    ) -> pandas.DataFrame:
+        """Returns a subset of the reactor data at points closest to the given ones.
+
+        Args:
+            points (numpy.array): the data from readings closest to these points will be returned
+            reference (str): name of the column to look for points
+
+        Returns:
+            filtered_data: DataFrame containing data closest to the given points
+
+        Raises:
+            KeyError: when the reference column is not in the DataFrame
+        """
+        if reference not in self.dataframe.columns:
+            raise KeyError("Reference column not in DataFrame")
+
+        idx = [abs(self.dataframe.loc[:, reference] - p).idxmin() for p in points]
+
+        return self.dataframe.loc[idx]
+
+
+class DWData(Dict[str, ReactorData]):
     """Standardized data type for DASGIP data."""
 
     def __init__(self, version: DASwareVersion):
@@ -150,85 +230,6 @@ class DWData(dict):
         ]
 
         return narrow_data
-
-
-class ReactorData(object):
-    """Data structure containing data from one reactor."""
-
-    def __init__(self, id: int):
-        self._id = id
-        self._setup = None
-        self._unit = None
-        self._requirements = None
-        self._sensor_elements = None
-        self._device_channels = None
-        self._profiles = None
-        self._trackdata = None
-        self._dataframe = None
-
-    @property
-    def id(self) -> int:
-        """Number of the reactor."""
-        return self._id
-
-    @property
-    def setup(self) -> pandas.DataFrame:
-        """Dataframe of overall process information."""
-        return self._setup
-
-    @property
-    def unit(self) -> pandas.DataFrame:
-        """Properties of the reactor."""
-        return self._unit
-
-    @property
-    def requirements(self) -> pandas.DataFrame:
-        return self._requirements
-
-    @property
-    def sensor_elements(self) -> pandas.DataFrame:
-        """Table of connected sensors."""
-        return self._sensor_elements
-
-    @property
-    def device_channels(self) -> pandas.DataFrame:
-        return self._device_channels
-
-    @property
-    def profiles(self) -> pandas.DataFrame:
-        return self._profiles
-
-    @property
-    def trackdata(self) -> pandas.DataFrame:
-        """Contains timeseries of mass flows."""
-        return self._trackdata
-
-    @property
-    def dataframe(self) -> pandas.DataFrame:
-        """Primary table of setpoint (SP) and actual (PV) control parameters."""
-        return self._dataframe
-
-    def get_closest_data(
-        self, points: numpy.array, reference: str = "process_time"
-    ) -> pandas.DataFrame:
-        """Returns a subset of the reactor data at points closest to the given ones.
-
-        Args:
-            points (numpy.array): the data from readings closest to these points will be returned
-            reference (str): name of the column to look for points
-
-        Returns:
-            filtered_data: DataFrame containing data closest to the given points
-
-        Raises:
-            KeyError: when the reference column is not in the DataFrame
-        """
-        if reference not in self.dataframe.columns:
-            raise KeyError("Reference column not in DataFrame")
-
-        idx = [abs(self.dataframe.loc[:, reference] - p).idxmin() for p in points]
-
-        return self.dataframe.loc[idx]
 
 
 class DASwareParser(object):
