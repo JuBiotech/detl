@@ -263,7 +263,7 @@ class TestReactorDataProps(unittest.TestCase):
     def test_reactor_data(self):
         ddata = detl.parse(v4_testfiles[0])
         rdata = list(ddata.values())[0]
-        self.assertIsInstance(rdata, detl.ReactorData)
+        self.assertIsInstance(rdata, detl.core.ReactorData)
 
         # check properties
         rdata.id
