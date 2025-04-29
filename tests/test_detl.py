@@ -259,5 +259,23 @@ class TestGetNarrowData(unittest.TestCase):
             ddata.get_narrow_data(kdim="volume_pv")
 
 
+class TestReactorDataProps(unittest.TestCase):
+    def test_reactor_data(self):
+        ddata = detl.parse(v4_testfiles[0])
+        rdata = ddata.values()[0]
+        self.assertIsInstance(rdata, detl.ReactorData)
+
+        # check properties
+        rdata.id
+        rdata.setup
+        rdata.unit
+        rdata.requirements
+        rdata.sensor_elements
+        rdata.device_channels
+        rdata.profiles
+        rdata.trackdata
+        rdata.dataframe
+
+
 if __name__ == "__main__":
     unittest.main()
