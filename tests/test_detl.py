@@ -262,7 +262,7 @@ class TestGetNarrowData(unittest.TestCase):
 class TestReactorDataProps(unittest.TestCase):
     def test_reactor_data(self):
         ddata = detl.parse(v4_testfiles[0])
-        rdata = ddata.values()[0]
+        rdata = list(ddata.values())[0]
         self.assertIsInstance(rdata, detl.ReactorData)
 
         # check properties
