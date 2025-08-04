@@ -200,6 +200,7 @@ class TestDW5Parsing(unittest.TestCase):
 
         assert "pump_a_rate_sp" in ddata[1].dataframe.columns
         assert "pump_b_rate_sp" in ddata[1].dataframe.columns
+        assert "temperature_pv" in ddata[1].dataframe.columns
 
         self.assertAlmostEqual(ddata[1].dataframe.loc[11359, "aeration_x_co2_pv"], 0.034, places=3)
         self.assertAlmostEqual(ddata[2].dataframe.loc[4128, "stirrer_speed_pv"], 1059.382, places=3)
