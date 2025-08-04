@@ -39,7 +39,7 @@ BLOCKPARSERS = {
 columnmapping = {
     "volume_pv": "\\.V\\d+\\.VPV",
     "temperature_sp": "\\.T\\d+\\.SP",
-    "temperature_pv": "\\.\\.T\\d+\\.PV",
+    "temperature_pv": r"Unit.\d.T\d.+PV",
     "temperature_out": "\\.T\\d+\\.Out",
     "stirrer_speed_sp": "\\.N\\d+\\.SP",
     "stirrer_speed_pv": "\\.N\\d+\\.PV",
