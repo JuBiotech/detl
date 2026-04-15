@@ -1,4 +1,5 @@
 """Contains unit tests for the `detl` package"""
+
 import datetime
 import pathlib
 import unittest

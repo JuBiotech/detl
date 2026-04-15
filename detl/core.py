@@ -1,4 +1,5 @@
 """Specifies the base types for parsing and representing DASware data."""
+
 import abc
 import enum
 import pathlib
