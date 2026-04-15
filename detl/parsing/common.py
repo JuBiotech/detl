@@ -158,6 +158,6 @@ def transform_trackdata(
         if (not new_data.empty) and (not new_data.isnull().all()):
             transformed_data.loc[:, key] = new_data
 
-    transformed_data = transformed_data.fillna(method="ffill")
+    transformed_data = transformed_data.ffill()
 
     return transformed_data
