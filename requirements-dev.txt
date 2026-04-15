@@ -1,7 +1,7 @@
+build
 flake8
 pandas>=3.0.0
 pytest
 pytest-cov
 twine
-wheel
 watermark

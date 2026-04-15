@@ -1,5 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "detl"
+version = "1.2.0"
+description = "Package for parsing and transforming DASware raw data exports."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "AGPL-3.0-or-later"
+authors = [
+    {name = "Michael Osthege", email = "m.osthege@fz-juelich.de"},
+    {name = "Niklas Tenhaef", email = "n.tenhaef@fz-juelich.de"},
+    {name = "Valentin Steier", email = "v.steier@fz-juelich.de"},
+]
+classifiers = [
+    "Programming Language :: Python",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "numpy",
+    "pandas",
+    "pytz",
+]
+
+[project.urls]
+Homepage = "https://github.com/jubiotech/detl"
+Documentation = "https://detl.readthedocs.io/en/latest/"
+Download = "https://pypi.org/project/detl/"
+
+[tool.setuptools]
+package-dir = {"detl" = "detl"}
+
+[tool.setuptools.package-data]
+"detl" = ["py.typed"]
+
 [tool.black]
 line-length = 100
 
 [tool.isort]
 profile = "black"
+
+[tool.mypy]
+ignore_missing_imports = true
+exclude = [
+    'test_.*?\.py$',
+]
