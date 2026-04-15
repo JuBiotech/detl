@@ -1,7 +1,9 @@
+import importlib.metadata
+
 from . import parsing
 from .core import DASwareParser, DASwareVersion, DWData
 
-__version__ = "1.1.3"
+__version__ = importlib.metadata.version(__package__ or __name__)
 
 parsers = {
     DASwareVersion.V4: parsing.dw4.DASware4Parser,
