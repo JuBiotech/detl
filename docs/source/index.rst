@@ -15,8 +15,8 @@ In the following chapters, we introduce the data structures, basic functions and
    :maxdepth: 2
    :caption: Examples
 
-   01_Basic_Use
-   02_Closest_Point_Lookup
+   notebooks/01_Basic_Use
+   notebooks/02_Closest_Point_Lookup
 
 
 You can find auto-generated API documentation below:
