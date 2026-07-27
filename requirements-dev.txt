@@ -1,6 +1,6 @@
 build
 flake8
-pandas>=3.0.4
+pandas>=3.0.5
 pytest
 pytest-cov
 twine
