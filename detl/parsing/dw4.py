@@ -104,13 +104,9 @@ columnmapping = {
 
 
 class DASware4Parser(core.DASwareParser):
-    def parse(self, filepath) -> core.DWData:
-        """Parses the provided DASware CSV file into a data object.
-
-        Args:
-            filepath (str or pathlib.Path): path pointing to the file of interest
-        """
-        scoped_blocks = common.split_blocks(filepath)
+    def _parse(self, raw: bytes) -> core.DWData:
+        """Parses the raw content of a DASware CSV file into a data object."""
+        scoped_blocks = common.split_blocks(raw)
         dd = common.transform_to_dwdata(scoped_blocks, BLOCKPARSERS, version=core.DASwareVersion.V5)
 
         for _, reactor in dd.items():

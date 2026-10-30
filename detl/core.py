@@ -3,7 +3,7 @@
 import abc
 import enum
 import pathlib
-from typing import Dict
+from typing import Dict, Protocol
 
 import numpy
 import pandas
@@ -233,18 +233,51 @@ class DWData(Dict[str, ReactorData]):
         return narrow_data
 
 
+class SupportsRead[T](Protocol):
+    """Object with a ``read()`` method returning ``T``, such as a file opened in binary mode."""
+
+    def read(self) -> T: ...
+
+
+type Source = pathlib.Path | str | bytes | SupportsRead[bytes]
+"""Raw DASWare data: a file path, the file content, or a binary stream.
+
+A ``str`` is always interpreted as a path. Streams must be opened in binary mode;
+they are read from their current position and are not closed.
+"""
+
+
+def read_source(source: Source) -> bytes:
+    """Return the raw content of ``source``, reading it from disk or the stream if needed."""
+    if isinstance(source, bytes):
+        return source
+    if isinstance(source, (str, pathlib.Path)):
+        return pathlib.Path(source).read_bytes()
+    content = source.read()
+    if not isinstance(content, bytes):
+        raise TypeError(
+            f"Expected a binary stream, got {type(content).__name__} content. "
+            "Open the file in binary mode ('rb')."
+        )
+    return content
+
+
 class DASwareParser(object):
     """Abstract type for parsers that read DASware CSV files."""
 
     __metaclass__ = abc.ABCMeta
 
-    @abc.abstractmethod
-    def parse(self, filepath: pathlib.Path) -> DWData:
+    def parse(self, source: Source) -> DWData:
         """Parses the provided DASware CSV file into a data object.
 
         Args:
-            filepath (str or pathlib.Path): path pointing to the file of interest
+            source (pathlib.Path | str | bytes | SupportsRead[bytes]): Path to the file, its content as bytes, or a binary stream
         """
+        return self._parse(read_source(source))
+
+    @abc.abstractmethod
+    def _parse(self, raw: bytes) -> DWData:
+        """Parse the raw content of a DASWare CSV file"""
         raise NotImplementedError(
             "Whoever implemented {} screwed up.".format(self.__class__.__name__)
         )

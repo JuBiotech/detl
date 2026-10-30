@@ -61,12 +61,9 @@ class TestParserSelection(unittest.TestCase):
 
 class TestCommonParsing(unittest.TestCase):
     def test_split_blocks_v5(self):
-        with self.assertRaises(ValueError):
-            detl.parsing.common.split_blocks(["bla"])
-
         filepath = pathlib.Path(dir_testfiles, "v5_short_CTPC06280.Control.csv")
 
-        scoped_blocks = detl.parsing.common.split_blocks(filepath)
+        scoped_blocks = detl.parsing.common.split_blocks(filepath.read_bytes())
         self.assertEqual(len(scoped_blocks), 5)
         self.assertTrue(None in scoped_blocks)
         self.assertTrue(1 in scoped_blocks)
@@ -99,7 +96,7 @@ class TestCommonParsing(unittest.TestCase):
 
     def test_parse_generic(self):
         filepath = pathlib.Path(dir_testfiles, "v5_short_CTPC06280.Control.csv")
-        scoped_blocks = detl.parsing.common.split_blocks(filepath)
+        scoped_blocks = detl.parsing.common.split_blocks(filepath.read_bytes())
         attr, df = detl.parsing.common.parse_generic(
             "Info", scoped_blocks[None]["Info"], scope=None
         )
@@ -110,7 +107,7 @@ class TestCommonParsing(unittest.TestCase):
 
     def test_parse_generic_T(self):
         filepath = pathlib.Path(dir_testfiles, "v5_short_CTPC06280.Control.csv")
-        scoped_blocks = detl.parsing.common.split_blocks(filepath)
+        scoped_blocks = detl.parsing.common.split_blocks(filepath.read_bytes())
         attr, df = detl.parsing.common.parse_generic_T(
             "Info", scoped_blocks[None]["Info"], scope=None
         )
@@ -121,7 +118,7 @@ class TestCommonParsing(unittest.TestCase):
 
     def test_transform_to_dwdata_v5(self):
         filepath = pathlib.Path(dir_testfiles, "v5_short_CTPC06280.Control.csv")
-        scoped_blocks = detl.parsing.common.split_blocks(filepath)
+        scoped_blocks = detl.parsing.common.split_blocks(filepath.read_bytes())
         dd = detl.parsing.common.transform_to_dwdata(
             scoped_blocks, detl.parsing.dw5.BLOCKPARSERS, detl.DASwareVersion.V5
         )

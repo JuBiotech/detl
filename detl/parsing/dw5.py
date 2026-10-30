@@ -1,5 +1,4 @@
 import logging
-import pathlib
 
 import numpy
 import pandas
@@ -124,13 +123,9 @@ columnmapping = {
 
 
 class DASware5Parser(core.DASwareParser):
-    def parse(self, filepath: pathlib.Path) -> core.DWData:
-        """Parses the provided DASware CSV file into a data object.
-
-        Args:
-            filepath (str or pathlib.Path): path pointing to the file of interest
-        """
-        scoped_blocks = common.split_blocks(filepath)
+    def _parse(self, raw: bytes) -> core.DWData:
+        """Parses the raw content of a DASware CSV file into a data object."""
+        scoped_blocks = common.split_blocks(raw)
         scoped_blocks = {
             key: value for (key, value) in scoped_blocks.items() if "TrackData" in list(value)
         }

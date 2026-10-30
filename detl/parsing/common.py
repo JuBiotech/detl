@@ -1,10 +1,9 @@
 import collections
 import datetime
+import io
 import logging
-import pathlib
 import re
 import warnings
-from io import StringIO
 
 import numpy
 import pandas
@@ -15,32 +14,36 @@ from . import utils
 logger = logging.getLogger("detl.parsing.common")
 
 
-def split_blocks(filepath: pathlib.Path) -> dict:
-    """Reads a CSV file and splits its contents into scoped blocks.
+def split_blocks(raw: bytes) -> dict[int | None, dict[str, str]]:
+    """Splits the raw content of a DASware CSV file into scoped blocks.
 
     Args:
-        filepath (pathlib.Path): path to the raw CSV
+        raw (bytes): content of the raw CSV
 
     Returns:
         scoped_blocks (dict): dicationary mapping scope to dictionary of blocks
     """
-    if not isinstance(filepath, (str, pathlib.Path)):
-        raise ValueError("Please provide filepath either as str or pathlib.Path object")
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        text = raw.decode("latin-1")
 
     # split the entire file into table-blocks
-    blocks = [[]]
-    with pathlib.Path(filepath).open(mode="r", errors="replace") as file:
-        for line in file:
-            if len(line) == 1:
-                blocks.append([])
-            else:
-                blocks[-1].append(line)
+    blocks: list[list[str]] = [[]]
+    # universal newlines like open(); str.splitlines() would also split on Latin-1 "\x85"
+    for line in io.StringIO(text, newline=None):
+        if len(line) == 1:
+            blocks.append([])
+        else:
+            blocks[-1].append(line)
     # drop empty blocks
     blocks = [block for block in blocks if len(block) > 1]
 
     # group blocks by scope (None or reactor-number)
-    scoped_blocks = collections.defaultdict(dict)
-    scope = None
+    scoped_blocks: collections.defaultdict[int | None, dict[str, str]] = collections.defaultdict(
+        dict
+    )
+    scope: int | None = None
     for blocklines in blocks:
         blockheader = blocklines[0].strip()
         setup_matches = re.findall(r'"\[Setup(\d+)\]"', blockheader)
@@ -87,7 +90,7 @@ def transform_to_dwdata(
 
 
 def parse_generic(header, block, scope):
-    df = pandas.read_csv(StringIO(block), sep=";")
+    df = pandas.read_csv(io.StringIO(block), sep=";")
     attr = "_" + header.lower().replace(" ", "_").replace("-", "_")
     return (attr, df)
 
