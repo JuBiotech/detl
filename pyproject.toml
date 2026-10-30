@@ -27,6 +27,7 @@ dependencies = [
     "numpy",
     "pandas",
     "pytz",
+    "typing_extensions>=4.5; python_version < '3.13'",
 ]
 
 [project.urls]
