@@ -1,6 +1,7 @@
 """Contains unit tests for the `detl` package"""
 
 import datetime
+import io
 import pathlib
 import unittest
 
@@ -57,6 +58,35 @@ class TestParserSelection(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             _ = detl.get_parser(pathlib.Path(dir_testfiles, "invalid.csv"))
         return
+
+
+class TestSources(unittest.TestCase):
+    def test_read_source(self):
+        fp = v4_testfiles[1]
+        raw = fp.read_bytes()
+        for source in [raw, fp, str(fp), io.BytesIO(raw)]:
+            self.assertEqual(detl.core.read_source(source), raw)
+        with self.assertRaises(TypeError):
+            detl.core.read_source(io.StringIO("text"))
+
+    def test_parse_stream(self):
+        # detection and parsing must share a single read of the stream
+        ddata = detl.parse(io.BytesIO(v4_testfiles[1].read_bytes()))
+        self.assertEqual(len(ddata), v4_nreactors[1])
+
+    def test_crlf_line_endings(self):
+        raw = v4_testfiles[1].read_bytes()
+        self.assertEqual(
+            detl.parsing.common.split_blocks(raw.replace(b"\n", b"\r\n")),
+            detl.parsing.common.split_blocks(raw),
+        )
+
+    def test_deprecated_filepath(self):
+        fp = v4_testfiles[1]
+        with self.assertWarns(DeprecationWarning):
+            detl.parse(filepath=fp)
+        with self.assertRaises(TypeError):
+            detl.parse(fp, filepath=fp)
 
 
 class TestCommonParsing(unittest.TestCase):

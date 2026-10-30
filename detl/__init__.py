@@ -1,7 +1,17 @@
 import importlib.metadata
+import pathlib
+import sys
+import warnings
+from typing import overload
 
 from . import parsing
-from .core import DASwareParser, DASwareVersion, DWData
+from .core import DASwareParser, DASwareVersion, DWData, Source, read_source
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
+
 
 __version__ = importlib.metadata.version(__package__ or __name__)
 
@@ -11,11 +21,11 @@ parsers = {
 }
 
 
-def get_parser(filepath) -> DASwareParser:
+def get_parser(source: Source) -> DASwareParser:
     """Analyzes a raw DASware CSV file and selects an appropiate parser.
 
     Args:
-        filepath (str or pathlib.Path): path pointing to the file of interest
+        source (pathlib.Path, str, bytes or binary stream): Path to the file of interest, its content as bytes, or a binary stream
 
     Returns:
         DWDParser: a parser that can be used for the provided file type
@@ -23,14 +33,11 @@ def get_parser(filepath) -> DASwareParser:
     Raises:
         NotImlementedError: when the file contents do not match with a known DASware CSV style
     """
+    content = read_source(source)
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
-            lines = f.readlines()
+        lines = content.decode("utf-8").splitlines()
     except UnicodeDecodeError:
-        with open(filepath, "r", encoding="latin-1") as f:
-            lines = f.readlines()
-
-    version = None
+        lines = content.decode("latin-1").splitlines()
 
     if len(lines) > 2 and lines[2].startswith('"FngArchiv";"4.0.1"'):
         version = DASwareVersion.V4
@@ -44,23 +51,56 @@ def get_parser(filepath) -> DASwareParser:
     return parser_cls()
 
 
-def parse(filepath, *, inoculation_times: dict = None) -> DWData:
+@overload
+def parse(source: Source, *, inoculation_times: dict | None = None) -> DWData: ...
+
+
+@overload
+@deprecated("'filepath' is deprecated. Use 'source' instead.")
+def parse(*, filepath, inoculation_times: dict | None = None) -> DWData: ...
+
+
+def parse(
+    source: Source | None = None,
+    filepath: str | pathlib.Path | None = None,
+    *,
+    inoculation_times: dict | None = None,
+) -> DWData:
     """Parses a raw DASware CSV file into a DWData object.
 
-    Args:
-        filepath (str or pathlib.Path): path pointing to the file of interest
-        inoculation_times (dict or None): optional overrides for inoculation timepoints
-            key (int): reactor number
-            value (datetime.datetime): timezone-aware datetime object of the real inoculation time (computer clock!)
+    Parameters:
+    -----------
+        source: pathlib.Path | str | bytes
+            Path pointing to the file of interest, its content as bytes, or a binary stream. A ``str`` is always interpreted as a path. Streams must be opened in binary mode;\n
+            they are read from their current position and are not closed.
+        inoculation_times: dict | None
+            optional overrides for inoculation timepoints
+                key (int): reactor number
+                value (datetime.datetime): timezone-aware datetime object of the real inoculation time (computer clock!)
 
     Returns:
+    --------
         DWData: parsed data object
 
     Raises:
         NotImlementedError: when the file contents do not match with a known DASware CSV style
     """
-    parser = get_parser(filepath)
-    data = parser.parse(filepath)
+    if filepath is not None:
+        if source is not None:
+            raise TypeError("parse() got both 'source' and 'filepath'")
+        # @deprecated on an overload only informs type checkers, so warn at runtime too
+        warnings.warn(
+            "'filepath' is deprecated, use 'source' instead.", DeprecationWarning, stacklevel=2
+        )
+        source = filepath
+    elif source is None:
+        raise TypeError("parse() missing required argument: 'source'")
+
+    # Read once, so streams are consumed only once by detection and parsing
+    content = read_source(source)
+
+    parser = get_parser(content)
+    data = parser.parse(content)
 
     if inoculation_times:
         for r, dt_inoculate in inoculation_times.items():
